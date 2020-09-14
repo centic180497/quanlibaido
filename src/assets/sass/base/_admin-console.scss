@@ -1,0 +1,13 @@
+#root {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.admin-view{
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+}
