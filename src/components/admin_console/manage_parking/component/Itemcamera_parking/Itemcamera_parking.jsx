@@ -1,6 +1,6 @@
-import React, { Component, useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Card, CardActions, CardContent, CardMedia, IconButton, Tooltip } from '@material-ui/core';
+import { Typography, Card, CardActions, CardContent, IconButton, Tooltip } from '@material-ui/core';
 import { Visibility as VisibilityIcon, Info as InfoIcon } from '@material-ui/icons';
 
 function Listitem(props) {
@@ -36,7 +36,6 @@ function Listitem(props) {
     </div>
   );
 }
-
 export default Listitem;
 
 const useStyles = makeStyles((theme) => ({
@@ -79,6 +78,6 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
   },
   tooltip: {
-    padding: 0,
+    // padding: 0,
   },
 }));

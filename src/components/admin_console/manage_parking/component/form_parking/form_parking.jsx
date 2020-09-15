@@ -6,7 +6,6 @@ import {
     DialogContent,
     DialogTitle,
     FormHelperText,
-    Tooltip,
     Dialog,
     Button,
     Grid,
@@ -20,15 +19,13 @@ import {
     TextField,
     Fab,
 } from '@material-ui/core'
-import { Controller, useForm } from 'react-hook-form'
-import { CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon, CheckBox as CheckBoxIcon } from '@material-ui/icons'
-// import FormAdd from "components/sitemap_page/component/Form/Form";
+import { Controller, useForm, useFieldArray, useWatch } from 'react-hook-form'
 import { makeStyles } from '@material-ui/core/styles'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import Radio from '@material-ui/core/Radio'
-import RadioGroup from '@material-ui/core/RadioGroup'
+import { RadioGroup, Tooltip } from '@material-ui/core'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-// import Form from './component/form/Form';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined'
 const ContentTypes = {
     ANGULAR: 'ANGULAR',
     REACT: 'REACT',
@@ -45,14 +42,28 @@ function FormAddPage(props) {
     const contentTypeKeys = Object.keys(ContentTypes)
 
     const { register, handleSubmit, errors, control } = useForm()
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'items',
+    })
 
     const isNameError = errors.name && errors.name.type === 'required'
-    const nameErrorText = isNameError ? 'Name is required' : ''
+    const nameErrorText = isNameError ? 'Tên bãi đỗ không được để trống' : ''
 
-    const isDescriptionError = errors.description && errors.description.type === 'required'
-    const descriptionErrorText = isDescriptionError ? 'Description is required' : ''
-    const lat = errors.description && errors.description.type === 'required'
-    const lattext = lat ? 'lat is required' : ''
+    const isDescriptionError = errors.total && errors.total.type === 'required'
+    const descriptionErrorText = isDescriptionError ? 'Tổng số không đươc để trống' : ''
+
+    const typedueError = errors.typedue && errors.typedue.type === 'required'
+    const typedueErrorText = typedueError ? 'Loại bãi đỗ không được để trống' : ''
+
+    const provinceError = errors.province && errors.province.type === 'required'
+    const typeprovinceErrorText = provinceError ? 'Thành phố không được để trống' : ''
+
+    const districError = errors.distric && errors.distric.type === 'required'
+    const typedistricErrorText = districError ? 'Thành phố không được để trống' : ''
+
+    const communsError = errors.communs && errors.communs.type === 'required'
+    const typecommunsErrorText = provinceError ? 'Phường không được để trống' : ''
 
     const onSubmit = handleSubmit((updatedData) => console.log(updatedData))
     const classes = useStyles()
@@ -62,17 +73,17 @@ function FormAddPage(props) {
         { id: 2, name: 'Quan Cam Le' },
         { id: 3, name: 'Quan Ngu Hanh Son' },
     ])
-    const [value, setValue] = React.useState('');
+    const [value, setValue] = React.useState('')
     // useEffect(() => {
     //   props.isSeachcam(props.political);
     //   props.Province();
     // }, []);
     const city = [{ id: 1, name: 'Thanh pho Da Nang' }]
     const handleRadioChange = (event) => {
-        setValue(event.target.value);
-        console.log('sạhasihf',value);
-        
-      };
+        setValue(event.target.value)
+        console.log('sạhasihf', value)
+    }
+    console.log(fields)
 
     return (
         <div className={classes.wrapGrid}>
@@ -90,6 +101,7 @@ function FormAddPage(props) {
                         <form onSubmit={onSubmit} autoComplete="off">
                             <div>
                                 <TextField
+                                    size="small"
                                     autoFocus
                                     fullWidth
                                     type="text"
@@ -103,48 +115,36 @@ function FormAddPage(props) {
                                 />
                                 <div className={classes.latlng}>
                                     <TextField
+                                        size="small"
                                         disabled
+                                        type="lat"
                                         name="lat"
                                         id="outlined-disabled"
-                                        label="lat"
+                                        label="Kinh Độ"
                                         defaultValue="lat"
                                         variant="outlined"
-                                        helperText={lattext}
-                                        error={lat}
+                                        // helperText={latErrorText}
+                                        // error={isLatError}
                                         inputRef={register({ required: true })}
+                                        ref={register}
                                         className={classes.formInput}
                                     />
+                                    {errors.lat && <p>{errors.lat.message}</p>}
                                     <TextField
+                                        size="small"
                                         disabled
                                         name="lng"
                                         id="outlined-disabled"
-                                        label="lng"
+                                        label="Vĩ độ"
                                         defaultValue="lat"
                                         variant="outlined"
-                                        helperText={descriptionErrorText}
-                                        error={isDescriptionError}
+                                        // helperText={isDescriptionError}
+                                        // error={descriptionErrorText}
                                         inputRef={register({ required: true })}
                                         className={classes.formInput}
                                     />
                                 </div>
-                                {/* <Autocomplete
-                                    multiple
-                                    id="tags-outlined"
-                                    options={citys}
-                                    getOptionLabel={(option) => option.name}
-                                    style={{ width: 300 }}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            name="single"
-                                            label="Combo box - Single"
-                                            variant="outlined"
-                                            fullWidth
-                                            placeholder="Favorites"
-                                            inputRef={register}
-                                        />
-                                    )}
-                                /> */}
+
                                 <div>
                                     <Autocomplete
                                         // multiple
@@ -154,7 +154,17 @@ function FormAddPage(props) {
                                         noOptionsText={'Không có lựa chọn'}
                                         disableCloseOnSelect
                                         renderInput={(params) => (
-                                            <TextField {...params} name="province" label="Thành Phô" variant="outlined" fullWidth inputRef={register} />
+                                            <TextField
+                                                {...params}
+                                                helperText={typeprovinceErrorText}
+                                                error={provinceError}
+                                                name="province"
+                                                label="Thành phố"
+                                                size="small"
+                                                variant="outlined"
+                                                fullWidth
+                                                inputRef={register({ required: true })}
+                                            />
                                         )}
                                         className={classes.formInput}
                                     />
@@ -168,7 +178,17 @@ function FormAddPage(props) {
                                         noOptionsText={'Không có lựa chọn'}
                                         disableCloseOnSelect
                                         renderInput={(params) => (
-                                            <TextField {...params} name="distric" label="Quận/Huyện" variant="outlined" fullWidth inputRef={register} />
+                                            <TextField
+                                                {...params}
+                                                error={districError}
+                                                helperText={typedistricErrorText}
+                                                size="small"
+                                                name="distric"
+                                                label="Quận/Huyện"
+                                                variant="outlined"
+                                                fullWidth
+                                                inputRef={register({ required: true })}
+                                            />
                                         )}
                                         className={classes.formInput}
                                     />
@@ -182,7 +202,17 @@ function FormAddPage(props) {
                                         noOptionsText={'Không có lựa chọn'}
                                         disableCloseOnSelect
                                         renderInput={(params) => (
-                                            <TextField {...params} name="communs" label="Xã/Phường" variant="outlined" fullWidth inputRef={register} />
+                                            <TextField
+                                                error={communsError}
+                                                helperText={typecommunsErrorText}
+                                                {...params}
+                                                name="communs"
+                                                label="Xã/Phường"
+                                                variant="outlined"
+                                                fullWidth
+                                                inputRef={register({ required: true })}
+                                                size="small"
+                                            />
                                         )}
                                         className={classes.formInput}
                                     />
@@ -196,74 +226,127 @@ function FormAddPage(props) {
                                         noOptionsText={'Không có lựa chọn'}
                                         disableCloseOnSelect
                                         renderInput={(params) => (
-                                            <TextField {...params} name="typedue" label="Loại bãi đỗ" variant="outlined" fullWidth inputRef={register} />
+                                            <TextField
+                                                {...params}
+                                                name="typedue"
+                                                label="Loại bãi đỗ"
+                                                variant="outlined"
+                                                error={typedueError}
+                                                helperText={typedueErrorText}
+                                                fullWidth
+                                                inputRef={register({ required: true })}
+                                                size="small"
+                                            />
                                         )}
                                         className={classes.formInput}
                                     />
                                 </div>
                             </div>
                             <TextField
+                                size="small"
                                 autoFocus
                                 fullWidth
                                 type="text"
                                 label="Tổng số chỗ"
                                 name="total"
                                 variant="outlined"
-                                helperText={nameErrorText}
-                                error={isNameError}
+                                helperText={descriptionErrorText}
+                                error={isDescriptionError}
                                 inputRef={register({ required: true })}
                                 className={classes.formInput}
                             />
+
                             <div className={classes.radio}>
-                                <RadioGroup aria-label="quiz" name="due" className={classes.radiogroup} onChange={handleRadioChange}>
-                                    <FormControlLabel value="1" control={<Radio />} inputRef={register({ required: true })} label="Không thu phí" />
-                                    <FormControlLabel value="2" control={<Radio />} inputRef={register({ required: true })} label="Thu phí" />
+                                <RadioGroup aria-label="quiz" name="type" className={classes.radiogroup} onChange={handleRadioChange}>
+                                    <FormControlLabel
+                                        value="1"
+                                        control={<Radio color="primary" />}
+                                        inputRef={register({ required: true })}
+                                        label="Không thu phí"
+                                    />
+                                    <FormControlLabel
+                                        value="2"
+                                        control={<Radio color="primary" />}
+                                        inputRef={register({ required: true })}
+                                        label="Thu phí"
+                                        onClick={fields.length === 0 ? () => append({}) : null}
+                                    />
                                 </RadioGroup>
-                            </div>    
-                            {value==2&&(
-                                 <div className={classes.due}>
-                                 <TextField
-                                     autoFocus
-                                     fullWidth
-                                     type="text"
-                                     label="Tổng số chỗ"
-                                     name="total"
-                                     variant="outlined"
-                                     helperText={nameErrorText}
-                                     error={isNameError}
-                                     inputRef={register({ required: true })}
-                                     className={classes.formInput}
-                                 />
-                                   <TextField
-                                     autoFocus
-                                     fullWidth
-                                     type="text"
-                                     label="Tổng số chỗ"
-                                     name="total"
-                                     variant="outlined"
-                                     helperText={nameErrorText}
-                                     error={isNameError}
-                                     inputRef={register({ required: true })}
-                                     className={classes.formInput}
-                                 />
-                                   <TextField
-                                     autoFocus
-                                     fullWidth
-                                     type="text"
-                                     label="Tổng số chỗ"
-                                     name="total"
-                                     variant="outlined"
-                                     helperText={nameErrorText}
-                                     error={isNameError}
-                                     inputRef={register({ required: true })}
-                                     className={classes.formInput}
-                                 />
-                                 </div>    
-                            )}
-                           
-                            <Button type="submit" variant="outlined" color="primary">
-                                Save
-                            </Button>
+                            </div>
+                            {value == 2
+                                ? fields.map(({ id, name, type, amount }, index) => {
+                                      return (
+                                          <div className={classes.due} key={id}>
+                                              <div className={classes.fee}>
+                                                  <TextField
+                                                      size="small"
+                                                      autoFocus
+                                                      fullWidth
+                                                      type="text"
+                                                      label="Phương tiện"
+                                                      name={`items[${index}].name`}
+                                                      variant="outlined"
+                                                      //   helperText={nameErrorText}
+                                                      //   error={isNameError}
+                                                      defaultValue={name}
+                                                      //   inputRef={register({ required: true })}
+                                                      inputRef={register({})}
+                                                      className={classes.formInput}
+                                                  />
+                                                  <TextField
+                                                      size="small"
+                                                      autoFocus
+                                                      fullWidth
+                                                      type="text"
+                                                      label="Đơn vị tính"
+                                                      name={`items[${index}].type`}
+                                                      defaultValue={type}
+                                                      variant="outlined"
+                                                      //   helperText={nameErrorText}
+                                                      //   error={isNameError}
+                                                      //   inputRef={register({ required: true })}
+                                                      inputRef={register({})}
+                                                      className={classes.formInput}
+                                                  />
+                                                  <TextField
+                                                      size="small"
+                                                      defaultValue={amount}
+                                                      autoFocus
+                                                      fullWidth
+                                                      type="text"
+                                                      label="Giá tiền"
+                                                      name={`items[${index}].amount`}
+                                                      variant="outlined"
+                                                      //   helperText={nameErrorText}
+                                                      //   error={isNameError}
+                                                      inputRef={register({})}
+                                                      className={classes.formInput}
+                                                  />
+                                                  <Tooltip title="xóa" arrow className={classes.tooltip}>
+                                                      <IconButton size="small">
+                                                          <DeleteOutlinedIcon className={classes.icon} onClick={() => remove(index)} />
+                                                      </IconButton>
+                                                  </Tooltip>
+                                              </div>
+
+                                              <div className={classes.buttonappen}>
+                                                  <Button type="button" variant="contained" color="primary" onClick={() => append({})}>
+                                                      Thêm
+                                                  </Button>
+                                              </div>
+                                          </div>
+                                      )
+                                  })
+                                : null}
+                            <div className={classes.saveadd}>
+                                <Button type="submit" variant="contained" color="primary" className={classes.saveaddparking}>
+                                    Hủy
+                                </Button>
+
+                                <Button type="submit" variant="contained" color="primary" className={classes.saveaddparking}>
+                                    Lưu
+                                </Button>
+                            </div>
                         </form>
                     </div>
                 </Grid>
@@ -281,6 +364,7 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: '5px 0 5px -5px #333',
         height: '100%',
         position: 'relative',
+        background: '#ffffff',
     },
     listmenu: {
         width: '100%',
@@ -301,9 +385,16 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         fontSize: '15px',
     },
-    due:{
-        display:'flex'
+    due: {
+        // display: 'flex',
     },
+    saveaddparking: {
+        marginRight: '8px',
+    },
+    fee: {
+        display: 'flex',
+    },
+    deletefab: {},
     listCard: {
         display: 'flex',
         flexDirection: 'column',
@@ -326,6 +417,11 @@ const useStyles = makeStyles((theme) => ({
     },
     size: {
         fontSize: 16,
+    },
+    saveadd: {
+        right: 8,
+        bottom: 3,
+        position: 'absolute',
     },
     sizeitem: {
         fontSize: '14px',
@@ -357,11 +453,17 @@ const useStyles = makeStyles((theme) => ({
         bottom: 3,
         right: 8,
     },
+    buttonappen: {
+        marginTop: '10px',
+    },
     iconeditbuton: {
         padding: '0',
     },
     icondeletebuton: {
         padding: '0',
+    },
+    icon: {
+        padding: '5px',
     },
     listblck: {
         flexGrow: 1,
@@ -376,9 +478,6 @@ const useStyles = makeStyles((theme) => ({
     link: {
         textDecoration: 'none',
     },
-    setitem: {
-        // marginLeft: '16px',
-    },
     iconedit: {
         fontSize: '15px',
         padding: 0,
@@ -386,7 +485,6 @@ const useStyles = makeStyles((theme) => ({
     icondelete: {
         fontSize: '15px',
         padding: 0,
-        // marginLeft: '8px',
     },
     color: {
         color: 'red',

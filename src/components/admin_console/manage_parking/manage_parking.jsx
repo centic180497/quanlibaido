@@ -1,17 +1,7 @@
 import React, { useState } from 'react'
-import {
-
-    Tooltip,
-    Grid,
-    Card,
-    Paper,
-    Tabs,
-    Tab,
-    Fab,
-} from '@material-ui/core'
+import { Tooltip, Grid, Paper, Tabs, Tab, Fab } from '@material-ui/core'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Close as CloseIcon, Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@material-ui/icons'
-
 import { makeStyles } from '@material-ui/core/styles'
 import Seach from './component/seach_parking/seach_parking'
 import Listitem from './component/listitem_paking/listitem_parking'
@@ -31,7 +21,7 @@ function ManageParking(props) {
     return (
         <div className={classes.wrapGrid}>
             <div className={classes.listCamera}>
-                <Grid container className={classes.root}>
+                {!isshowmodel?(<Grid container className={classes.root}>
                     <Grid item xs={12}>
                         <Paper className={classes.listmenu}>
                             <Tabs value={0} indicatorColor="primary" textColor="primary" aria-label="disabled tabs example" className={classes.tablist}>
@@ -39,14 +29,15 @@ function ManageParking(props) {
                             </Tabs>
                         </Paper>
                     </Grid>
-                    <Grid className={classes.paper} item xs={12}>
-                        <Scrollbars>
-                            <div>
-                                <Seach />
-                                <Listitem />
-                            </div>
-                        </Scrollbars>
-                    </Grid>
+                    
+                        <Grid className={classes.paper} item xs={12}>
+                            <Scrollbars>
+                                <div>
+                                    <Seach />
+                                    <Listitem />
+                                </div>
+                            </Scrollbars>
+                        </Grid>
 
                     <div className={classes.listCard}>
                         <Tooltip title="Add" aria-label="add">
@@ -55,7 +46,8 @@ function ManageParking(props) {
                             </Fab>
                         </Tooltip>
                     </div>
-                </Grid>
+                </Grid>):null}
+                
                 <div className={classes.showform}>{isshowmodel ? <FormAddPage /> : null}</div>
             </div>
         </div>
@@ -65,11 +57,12 @@ function ManageParking(props) {
 export default ManageParking
 
 const useStyles = makeStyles((theme) => ({
-    customTab:{
-        width:'400px',
+    customTab: {
+        width: '400px',
+        background:'#ffffff'
     },
-    tablist:{
-        width:400
+    tablist: {
+        width: 400,
     },
     listCamera: {
         height: '100%',
