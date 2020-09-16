@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormGroup, Checkbox } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -6,8 +6,6 @@ import { CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon, CheckBox as CheckBoxI
 
 function AutocompleteCheckbox(props) {
   const classes = useStyles();
-  console.log(props);
-  
   const {option}=props;
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;

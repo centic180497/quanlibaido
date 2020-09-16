@@ -13,17 +13,17 @@ import AutocompleteCheckbox from '../autocomplete_parking/autocomplete_parking';
 
 function Seach(props) {
   const classes = useStyles();
-  const [citys, setcitys] = useState([{ id: 1, name: 'Thanh pho Da Nang' }])
-  const [districts, setdistricts] = useState([
+  const [citys] = useState([{ id: 1, name: 'Thanh pho Da Nang' }])
+  const [districts] = useState([
     { id: 1, name: 'Quan Hai Chau' },
     { id: 2, name: 'Quan Cam Le' },
     { id: 3, name: 'Quan Ngu Hanh Son' },
   ])
-  const [communes, setcommunes] = useState([
+  const [communes] = useState([
     { id: 1, name: 'Phuong Abc' },
     { id: 2, name: 'Phuong Bac My An' },
   ])
-  const [streets, setstreets] = useState([
+  const [streets] = useState([
     { id: 1, name: 'Nam Ky khoi nghia' },
     { id: 2, name: 'Nui Thanh' },
   ])

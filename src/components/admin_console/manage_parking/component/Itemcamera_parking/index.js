@@ -1,12 +1,12 @@
 import { connect} from 'react-redux'
-import {showFormParking} from 'actions/manage_parking/index'
+import {editFormData} from 'actions/manage_parking/index'
 
-import ManageParking from './manage_parking'
+import ItemParking from './Itemcamera_parking'
 
 const mapStateToProps = ({ manageparking }) => ({
     showformadd:manageparking.showformadd
 })        
 
 export default connect(mapStateToProps,{
-    showFormParking
-})(ManageParking)
+    editFormData
+})(ItemParking)

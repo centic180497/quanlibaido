@@ -1,19 +1,19 @@
-import React, { Component,useState } from 'react';
+import React, {useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Scrollbars } from 'react-custom-scrollbars';
 
-import ItemCamera from '../Itemcamera_parking/Itemcamera_parking';
+import ItemParking from '../Itemcamera_parking';
 
 function Listitem(props) {
   const classes = useStyles();
-  const [listCamera, setlistCamera] = useState([
-    { id: 1, nameCamera: 'Camera 1', address: 'Hòa Khê, Thanh Khê, Đà Nẵng' },
-    { id: 2, nameCamera: 'Camera 2', address: 'Quận ngũ hành sơn, Đà Nẵng' },
-    { id: 3, nameCamera: 'Camera 3', address: 'Hải Châu, Đà Nẵng' },
-    { id: 4, nameCamera: 'Camera 4', address: 'Hòa Minh, Liên Chiểu, Đà Nẵng' },
-    { id: 5, nameCamera: 'Camera 5', address: 'Hòa Minh, Liên Chiểu, Đà Nẵng' },
-    { id: 6, nameCamera: 'Camera 6', address: 'Hòa Minh, Liên Chiểu, Đà Nẵng' },
-    { id: 7, nameCamera: 'Camera 7', address: 'Hòa Minh, Liên Chiểu, Đà Nẵng' },
+  const [listCamera] = useState([
+    { id: 1, nameCamera: 'Camera 1', address: 'Hòa Khê, Thanh Khê, Đà Nẵng',type:1,fee:[],totalSlot:10,description:'abcdabcd' },
+    { id: 2, nameCamera: 'Camera 2', address: 'Quận ngũ hành sơn, Đà Nẵng' ,type:1,fee:[],totalSlot:10,description:'abcdabcd'},
+    { id: 3, nameCamera: 'Camera 3', address: 'Hải Châu, Đà Nẵng' ,type:1,fee:[],totalSlot:10,description:'abcdabcd'},
+    { id: 4, nameCamera: 'Camera 4', address: 'Hòa Minh, Liên Chiểu, Đà Nẵng',type:2, fee:[{vehicle: "Xe máy ", unit: "1 giờ", price: 10000 },{vehicle: "Xe máy ", unit: "1 giờ", price: 10000 },],totalSlot:10,description:'abcdabcd'},
+    { id: 5, nameCamera: 'Camera 5', address: 'Hòa Minh, Liên Chiểu, Đà Nẵng',type:2,fee:[{vehicle: "Xe máy ", unit: "1 giờ", price: 10000 },{vehicle: "Xe máy ", unit: "1 giờ", price: 10000 },],totalSlot:10,description:'abcdabcd'},
+    { id: 6, nameCamera: 'Camera 6', address: 'Hòa Minh, Liên Chiểu, Đà Nẵng',type:2,fee:[{vehicle: "Xe máy ", unit: "1 giờ", price: 10000 },{vehicle: "Xe máy ", unit: "1 giờ", price: 10000 },],totalSlot:10,description:'abcdabcd' },
+    { id: 7, nameCamera: 'Camera 7', address: 'Hòa Minh, Liên Chiểu, Đà Nẵng',type:1,fee:[],totalSlot:10,description:'abcdabcd'},
   ])
   return (
     <div className={classes.cameras}>
@@ -26,7 +26,7 @@ function Listitem(props) {
           {listCamera.length > 0
             ? listCamera.map((camera) => {
                 return (
-                  <ItemCamera 
+                  <ItemParking 
                     camera={camera}
                     key={camera.id}
                     showdata={props.showdata}

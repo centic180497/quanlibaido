@@ -3,12 +3,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Card, CardActions, CardContent, IconButton, Tooltip } from '@material-ui/core';
 import { Visibility as VisibilityIcon, Info as InfoIcon } from '@material-ui/icons';
 
-function Listitem(props) {
+function ItemParking(props) {
   const classes = useStyles();
-  const {  showdata, camera, markerActive, showpopup } = props;
+  const { camera, showpopup,editFormData } = props;
+  const showformdata =(camera) =>{
+    editFormData(camera)
+    // console.log(camera);
+    
+  }
   return (
     <div>
-      <Card className={showpopup === camera.id ? classes.cardActive : classes.card} onClick={() => showdata(camera)}>
+      <Card className={showpopup === camera.id ? classes.cardActive : classes.card} >
         <div className={classes.image}>
           {/* <CardMedia className={classes.img} image={camera1} title="Contemplative Reptile" /> */}
         </div>
@@ -26,7 +31,7 @@ function Listitem(props) {
               </IconButton>
             </Tooltip>
             <Tooltip title="Thông tin" arrow className={classes.tooltip}>
-              <IconButton size="small">
+              <IconButton size="small" onClick={() => showformdata(camera)}>
                 <InfoIcon className={classes.icon} />
               </IconButton>
             </Tooltip>
@@ -36,7 +41,7 @@ function Listitem(props) {
     </div>
   );
 }
-export default Listitem;
+export default ItemParking;
 
 const useStyles = makeStyles((theme) => ({
   card: {

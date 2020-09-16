@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
-import { Tooltip, Grid, Paper, Tabs, Tab, Fab } from '@material-ui/core'
+import React from 'react'
+import { Tooltip,Paper, Tabs, Tab, Fab } from '@material-ui/core'
 import { Scrollbars } from 'react-custom-scrollbars'
-import { Close as CloseIcon, Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@material-ui/icons'
+import {  Add as AddIcon } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
 import Seach from './component/seach_parking/seach_parking'
 import Listitem from './component/listitem_paking/listitem_parking'
-import FormAddPage from './component/form_parking/form_parking'
+import FormAddPage from './component/form_parking'
 
 function ManageParking(props) {
     const classes = useStyles()
-    const [isshowmodel, setisshowmodel] = useState(false)
     const showModal = (e) => {
-        setisshowmodel(true)
+       props.showFormParking()
     }
+    
     // useEffect(() => {
     //   props.isSeachcam(props.political);
     //   props.Province();
@@ -21,35 +21,38 @@ function ManageParking(props) {
     return (
         <div className={classes.wrapGrid}>
             <div className={classes.listCamera}>
-                {!isshowmodel?(<Grid container className={classes.root}>
-                    <Grid item xs={12}>
+                {!props.showformadd ? (
+                    <>
                         <Paper className={classes.listmenu}>
-                            <Tabs value={0} indicatorColor="primary" textColor="primary" aria-label="disabled tabs example" className={classes.tablist}>
+                            <Tabs value={0} indicatorColor="primary" textColor="primary" aria-label="simple tabs example" className={classes.tablist} variant="fullWidth">
                                 <Tab className={classes.customTab} label="Danh Sách" />
                             </Tabs>
                         </Paper>
-                    </Grid>
-                    
-                        <Grid className={classes.paper} item xs={12}>
-                            <Scrollbars>
-                                <div>
-                                    <Seach />
-                                    <Listitem />
-                                </div>
-                            </Scrollbars>
-                        </Grid>
 
-                    <div className={classes.listCard}>
-                        <Tooltip title="Add" aria-label="add">
-                            <Fab color="primary" className={classes.fab} onClick={(e) => showModal(e)}>
-                                <AddIcon />
-                            </Fab>
-                        </Tooltip>
+                        <div className={classes.listseach}>
+                            <Seach />
+
+                            <Scrollbars>
+                                <Listitem />
+                            </Scrollbars>
+                        </div>
+
+                        <div className={classes.listCard}>
+                            <Tooltip title="Add" aria-label="add">
+                                <Fab color="primary" className={classes.fab} onClick={(e) => showModal(e)}>
+                                    <AddIcon />
+                                </Fab>
+                            </Tooltip>
+                        </div>
+                    </>
+                ) : null}
+                {props.showformadd ? (
+                    <div className={classes.showform}>
+                        <FormAddPage showModal={showModal} />{' '}
                     </div>
-                </Grid>):null}
-                
-                <div className={classes.showform}>{isshowmodel ? <FormAddPage /> : null}</div>
+                ) : null}
             </div>
+            <div>doyyh</div>
         </div>
     )
 }
@@ -59,15 +62,18 @@ export default ManageParking
 const useStyles = makeStyles((theme) => ({
     customTab: {
         width: '400px',
-        background:'#ffffff'
+        background: '#ffffff',
     },
     tablist: {
         width: 400,
     },
     listCamera: {
-        height: '100%',
-        width: 'auto',
-        display: 'flex',
+       
+        position:'relative',
+        boxShadow: "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)"
+    },
+    listseach:{
+        height:'calc(100vh - 167px)'
     },
     root: {
         width: '400px',
@@ -78,17 +84,16 @@ const useStyles = makeStyles((theme) => ({
     },
     showform: {
         display: 'flex',
-    },
-    listmenu: {
-        width: '100%',
+        height:'100%'
     },
     paper: {
         color: theme.palette.text.secondary,
         height: '100%',
     },
     listCard: {
-        display: 'flex',
-        flexDirection: 'column',
+        right:'60px',
+        position:'absolute',
+        bottom:'25px'
     },
     bground: {
         backgroundColor: '#e0e0e0',
@@ -112,9 +117,7 @@ const useStyles = makeStyles((theme) => ({
     },
     wrapGrid: {
         display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'start',
-        height: '100%',
+        flex: '1 1 auto',
     },
     bground: {
         backgroundColor: '#e0e0e0',
@@ -131,7 +134,6 @@ const useStyles = makeStyles((theme) => ({
     fab: {
         position: 'absolute',
         bottom: 3,
-        right: 8,
     },
     iconeditbuton: {
         padding: '0',
@@ -182,10 +184,7 @@ const useStyles = makeStyles((theme) => ({
         top: theme.spacing(0),
         color: theme.palette.grey[500],
     },
-    listCard: {
-        display: 'flex',
-        flexDirection: 'column',
-    },
+ 
     siteMap: {
         display: 'flex',
         height: '100vh',
