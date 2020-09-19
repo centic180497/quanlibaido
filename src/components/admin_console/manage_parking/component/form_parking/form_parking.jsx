@@ -8,17 +8,20 @@ import { RadioGroup, Tooltip } from '@material-ui/core'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined'
 function FormAddPage(props) {
-    const { register, handleSubmit, errors, control, setValue, watch } = useForm()
+    const defaultValues = props.editFormData ? props.editFormData : { type: '1' }
+    const { register, handleSubmit, errors, control, setValue, watch, getValues, setError } = useForm({
+        defaultValues,
+    })
     const { fields, append, remove } = useFieldArray({
         control,
-        name: 'items',
+        name: 'fee',
     })
 
     const isNameError = errors.name && errors.name.type === 'required'
     const nameErrorText = isNameError ? 'Tên bãi đỗ không được để trống' : ''
 
     const isDescriptionError = errors.total && errors.total.type === 'required'
-    const descriptionErrorText = isDescriptionError ? 'Tổng số không đươc để trống' : ''
+    const descriptionErrorText = isDescriptionError ? 'Tổng số chỗ không được để trống' : ''
 
     const typedueError = errors.typedue && errors.typedue.type === 'required'
     const typedueErrorText = typedueError ? 'Loại bãi đỗ không được để trống' : ''
@@ -27,12 +30,16 @@ function FormAddPage(props) {
     const typeprovinceErrorText = provinceError ? 'Thành phố không được để trống' : ''
 
     const districError = errors.distric && errors.distric.type === 'required'
-    const typedistricErrorText = districError ? 'Thành phố không được để trống' : ''
+    const typedistricErrorText = districError ? 'Quận không được để trống' : ''
 
     const communsError = errors.communs && errors.communs.type === 'required'
     const typecommunsErrorText = provinceError ? 'Phường không được để trống' : ''
 
-    const onSubmit = handleSubmit((updatedData) => console.log(updatedData))
+    const onSubmit = handleSubmit((updatedData) => {
+        const param = { ...updatedData }
+        param['lat'] = getValues('lat')
+        param['lng'] = getValues('lng')
+    })
     const classes = useStyles()
 
     const [districts] = useState([
@@ -41,17 +48,24 @@ function FormAddPage(props) {
         { id: 3, name: 'Quan Ngu Hanh Son' },
     ])
 
+    useEffect(() => {
+        if (fields.length === 0) {
+            setValue('type', '1')
+        }
+    }, [fields])
 
     const type = watch('type')
+
     useEffect(() => {
-        console.log(type)
         setValue('type', type)
     }, [type, setValue])
 
     const cancleModal = (e) => {
         props.cancleFormParking()
     }
-    // console.log('control',props.editFormData.type)
+    const handleChange = (event) => {
+        setValue('type', event.target.value)
+    }
     return (
         <div className={classes.wrapGrid}>
             <Paper className={classes.listmenu}>
@@ -85,22 +99,24 @@ function FormAddPage(props) {
                                 name="lat"
                                 id="outlined-disabled"
                                 label="Kinh Độ"
-                                defaultValue="lat"
+                                defaultValue={props.editFormData?.lat || 'Kinh Độ'}
                                 variant="outlined"
+                                value={props.editFormData ? props.isEditing.lat : props.isAdding.lat}
                                 // helperText={latErrorText}
                                 // error={isLatError}
                                 inputRef={register({ required: true })}
-                                ref={register}
+                                ref={register()}
                                 className={classes.formInput}
                             />
-                            {errors.lat && <p>{errors.lat.message}</p>}
+
                             <TextField
                                 size="small"
                                 disabled
                                 name="lng"
                                 id="outlined-disabled"
-                                label="Vĩ độ"
-                                defaultValue="lat"
+                                label="Vĩ Độ"
+                                defaultValue={props.editFormData?.lng || 'Vĩ Độ'}
+                                value={props.editFormData ? props.isEditing.lng : props.isAdding.lng}
                                 variant="outlined"
                                 // helperText={isDescriptionError}
                                 // error={descriptionErrorText}
@@ -216,16 +232,24 @@ function FormAddPage(props) {
                         variant="outlined"
                         helperText={descriptionErrorText}
                         error={isDescriptionError}
-                        inputRef={register({ required: true })}
+                        inputRef={register({ required: true, pattern: /[-+]?[0-9]*[.,]?[0-9]+$/i })}
                         className={classes.formInput}
                         defaultValue={props.editFormData?.totalSlot || ''}
                     />
+                    {/* {errors.total && errors.total.type==="pattern"? <p>{errors.total.message}</p>:null} */}
+                    {errors.total && errors.total.type === 'pattern' ? <p style={{ color: 'red' }}>Vui lòng nhập số</p> : null}
 
                     <div className={classes.radio}>
-                        <RadioGroup aria-label="quiz" name="type" className={classes.radiogroup}  defaultValue={1} >
-                            <FormControlLabel value='1' control={<Radio color="primary" />} inputRef={register({ required: true })} label="Không thu phí" />
+                        <RadioGroup
+                            aria-label="quiz"
+                            name="type"
+                            className={classes.radiogroup}
+                            value={type || defaultValues.type.toString()}
+                            onChange={handleChange}
+                        >
+                            <FormControlLabel value="1" control={<Radio color="primary" />} inputRef={register({ required: true })} label="Không thu phí" />
                             <FormControlLabel
-                                value='2'
+                                value="2"
                                 control={<Radio color="primary" />}
                                 inputRef={register({ required: true })}
                                 label="Thu phí"
@@ -233,10 +257,10 @@ function FormAddPage(props) {
                             />
                         </RadioGroup>
                     </div>
-                    {type == 2 
-                        ? fields.map(({ id, name, type, amount }, index) => {
+                    {(type || defaultValues.type.toString()) === '2'
+                        ? fields.map((field, index) => {
                               return (
-                                  <div className={classes.due} key={id}>
+                                  <div className={classes.due} key={field.id}>
                                       <div className={classes.fee}>
                                           <TextField
                                               size="small"
@@ -244,14 +268,14 @@ function FormAddPage(props) {
                                               fullWidth
                                               type="text"
                                               label="Phương tiện"
-                                              name={`items[${index}].name`}
+                                              name={`fee[${index}].vehicle`}
                                               variant="outlined"
-                                              //   helperText={nameErrorText}
-                                              //   error={isNameError}
-                                              defaultValue={name}
-                                              //   inputRef={register({ required: true })}
+                                              defaultValue={field.vehicle}
+                                              helperText={nameErrorText}
+                                              error={isNameError}
+                                              inputRef={register({ required: true })}
                                               inputRef={register({})}
-                                              className={classes.formInput}
+                                              className={classes.formInputfee}
                                           />
                                           <TextField
                                               size="small"
@@ -259,28 +283,27 @@ function FormAddPage(props) {
                                               fullWidth
                                               type="text"
                                               label="Đơn vị tính"
-                                              name={`items[${index}].type`}
-                                              defaultValue={type}
+                                              name={`fee[${index}].field`}
+                                              defaultValue={field.unit}
                                               variant="outlined"
-                                              //   helperText={nameErrorText}
-                                              //   error={isNameError}
-                                              //   inputRef={register({ required: true })}
-                                              inputRef={register({})}
-                                              className={classes.formInput}
+                                              helperText={nameErrorText}
+                                              error={isNameError}
+                                              inputRef={register({ required: true })}
+                                              className={classes.formInputfee}
                                           />
                                           <TextField
                                               size="small"
-                                              defaultValue={amount}
+                                              defaultValue={field.price}
                                               autoFocus
                                               fullWidth
                                               type="text"
                                               label="Giá tiền"
-                                              name={`items[${index}].amount`}
+                                              name={`fee[${index}].price`}
                                               variant="outlined"
-                                              //   helperText={nameErrorText}
-                                              //   error={isNameError}
-                                              inputRef={register({})}
-                                              className={classes.formInput}
+                                              helperText={nameErrorText}
+                                              error={isNameError}
+                                              inputRef={register({ required: true })}
+                                              className={classes.formInputfee}
                                           />
                                           <Tooltip title="xóa" arrow className={classes.tooltip}>
                                               <IconButton size="small">
@@ -341,7 +364,12 @@ const useStyles = makeStyles((theme) => ({
     formInput: {
         marginTop: '10px',
         width: '100%',
-        fontSize: '15px',
+        fontSize: '14px',
+    },
+    formInputfee: {
+        marginTop: '10px',
+        fontSize: '14px',
+        marginRight: '10px',
     },
     due: {
         // display: 'flex',

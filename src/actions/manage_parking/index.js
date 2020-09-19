@@ -18,3 +18,17 @@ export function editFormData(payload) {
         payload
     }
 }
+export function editingParking(lat,lng){
+    return{
+        type:Types.IS_EDITTING_PARKING,
+        lat,
+        lng
+    }
+}
+export function addingParking(lat,lng){
+    return{
+        type:Types.IS_ADDING_PARKING,
+        lat,
+        lng
+    }
+}
