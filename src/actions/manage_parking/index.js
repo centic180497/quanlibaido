@@ -32,3 +32,14 @@ export function addingParking(lat,lng){
         lng
     }
 }
+export function showInfowindow(id){
+    return{
+        type:Types.SHOW_INFOWINDOW,
+        payload:id
+    }
+}
+export function cancleInforwindow(){
+    return{
+        type:Types.CANCLE_INFOWINDOW
+    }
+}

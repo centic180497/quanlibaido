@@ -9,7 +9,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined'
 function FormAddPage(props) {
     const defaultValues = props.editFormData ? props.editFormData : { type: '1' }
-    const { register, handleSubmit, errors, control, setValue, watch, getValues, setError } = useForm({
+    const { register, handleSubmit, errors, control, setValue, watch, getValues } = useForm({
         defaultValues,
     })
     const { fields, append, remove } = useFieldArray({
@@ -19,6 +19,12 @@ function FormAddPage(props) {
 
     const isNameError = errors.name && errors.name.type === 'required'
     const nameErrorText = isNameError ? 'Tên bãi đỗ không được để trống' : ''
+
+    const isLatError = errors.lat && errors.lat.type === 'required'
+    const latErrorText = isNameError ? 'kinh độ không được để trống' : ''
+
+    const isLngError = errors.lng && errors.lng.type === 'required'
+    const lngErrorText = isNameError ? 'Vĩ độ không được để trống' : ''
 
     const isDescriptionError = errors.total && errors.total.type === 'required'
     const descriptionErrorText = isDescriptionError ? 'Tổng số chỗ không được để trống' : ''
@@ -39,6 +45,7 @@ function FormAddPage(props) {
         const param = { ...updatedData }
         param['lat'] = getValues('lat')
         param['lng'] = getValues('lng')
+        console.log(param)
     })
     const classes = useStyles()
 
@@ -95,31 +102,32 @@ function FormAddPage(props) {
                             <TextField
                                 size="small"
                                 disabled
+                                autoFocus
+                                fullWidth
                                 type="lat"
                                 name="lat"
                                 id="outlined-disabled"
                                 label="Kinh Độ"
                                 defaultValue={props.editFormData?.lat || 'Kinh Độ'}
                                 variant="outlined"
-                                value={props.editFormData ? props.isEditing.lat : props.isAdding.lat}
-                                // helperText={latErrorText}
-                                // error={isLatError}
+                                value={props.editFormData ? props.editFormData.lat : props.isAdding.lat}
+                                helperText={latErrorText}
+                                error={isLatError}
                                 inputRef={register({ required: true })}
-                                ref={register()}
                                 className={classes.formInput}
                             />
-
                             <TextField
                                 size="small"
                                 disabled
                                 name="lng"
+                                type="lng"
                                 id="outlined-disabled"
                                 label="Vĩ Độ"
                                 defaultValue={props.editFormData?.lng || 'Vĩ Độ'}
-                                value={props.editFormData ? props.isEditing.lng : props.isAdding.lng}
+                                value={props.editFormData ? props.editFormData.lng : props.isAdding.lng}
                                 variant="outlined"
-                                // helperText={isDescriptionError}
-                                // error={descriptionErrorText}
+                                helperText={lngErrorText}
+                                error={isLngError}
                                 inputRef={register({ required: true })}
                                 className={classes.formInput}
                             />
@@ -144,6 +152,7 @@ function FormAddPage(props) {
                                         variant="outlined"
                                         fullWidth
                                         inputRef={register({ required: true })}
+                                        defaultValue={props.editFormData?.lng || ''}
                                     />
                                 )}
                                 className={classes.formInput}
@@ -274,7 +283,6 @@ function FormAddPage(props) {
                                               helperText={nameErrorText}
                                               error={isNameError}
                                               inputRef={register({ required: true })}
-                                              inputRef={register({})}
                                               className={classes.formInputfee}
                                           />
                                           <TextField
@@ -417,10 +425,6 @@ const useStyles = makeStyles((theme) => ({
         position: 'relative',
     },
     wrapGrid: {
-        // display: 'flex',
-        // justifyContent: 'flex-start',
-        // alignItems: 'start',
-        // height: '100%',
         flexDirection: 'column',
         display: 'flex',
         position: 'relative',
@@ -527,7 +531,7 @@ const useStyles = makeStyles((theme) => ({
     },
     tooltip: {
         padding: 5,
-        marginRight: 5,
+        marginTop: 8,
     },
     logtitle: {
         margin: '0',
