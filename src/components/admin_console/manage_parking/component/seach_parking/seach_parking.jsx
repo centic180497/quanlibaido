@@ -1,4 +1,4 @@
-import React,{ useState }from 'react';
+import React from 'react';
 import {
     ExpansionPanel,
     ExpansionPanelSummary,
@@ -9,26 +9,10 @@ import {
   } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { ExpandMore as ExpandMoreIcon} from '@material-ui/icons';
-import AutocompleteCheckbox from '../autocomplete_parking/autocomplete_parking';
+import AutocompleteCheckbox from '../autocomplete_parking';
 
 function Seach(props) {
   const classes = useStyles();
-  const [citys] = useState([{ id: 1, name: 'Thanh pho Da Nang' }])
-  const [districts] = useState([
-    { id: 1, name: 'Quan Hai Chau' },
-    { id: 2, name: 'Quan Cam Le' },
-    { id: 3, name: 'Quan Ngu Hanh Son' },
-  ])
-  const [communes] = useState([
-    { id: 1, name: 'Phuong Abc' },
-    { id: 2, name: 'Phuong Bac My An' },
-  ])
-  const [streets] = useState([
-    { id: 1, name: 'Nam Ky khoi nghia' },
-    { id: 2, name: 'Nui Thanh' },
-  ])
-  
-
   return (
     <div className={classes.formSearch}>
     <ExpansionPanel>
@@ -55,10 +39,10 @@ function Seach(props) {
               }}
             />
           </FormGroup>
-          <AutocompleteCheckbox option={citys} label="Tỉnh/Thành phố" />
-          <AutocompleteCheckbox option={districts} label="Quận/Huyện" />
+          <AutocompleteCheckbox />
+          {/* <AutocompleteCheckbox option={districts} label="Quận/Huyện" />
           <AutocompleteCheckbox option={communes} label="Phường/Xã" />
-          <AutocompleteCheckbox option={streets} label="Nhóm" />
+          <AutocompleteCheckbox option={streets} label="Nhóm" />  */}
           
         </form>
       </ExpansionPanelDetails>

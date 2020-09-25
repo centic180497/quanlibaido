@@ -1,5 +1,5 @@
 export default {
     fontFamily: ['Nunito'].join(','),
-    htmlFontSize: 14,
-    fontSize: 14
+    htmlFontSize: 15,
+    fontSize: 15
 }

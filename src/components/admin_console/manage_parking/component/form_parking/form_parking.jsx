@@ -65,7 +65,7 @@ function FormAddPage(props) {
 
     useEffect(() => {
         setValue('type', type)
-    }, [type, setValue])
+    }, [type])
 
     const cancleModal = (e) => {
         props.cancleFormParking()
@@ -85,7 +85,7 @@ function FormAddPage(props) {
                 <form onSubmit={onSubmit} autoComplete="off">
                     <div>
                         <TextField
-                            size="small"
+                            // size="small"
                             autoFocus
                             fullWidth
                             type="text"
@@ -100,7 +100,7 @@ function FormAddPage(props) {
                         />
                         <div className={classes.latlng}>
                             <TextField
-                                size="small"
+                                // size="small"
                                 disabled
                                 autoFocus
                                 fullWidth
@@ -431,9 +431,6 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: '0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
         width: 400,
     },
-    bground: {
-        backgroundColor: '#e0e0e0',
-    },
     blacklist: {
         marginTop: '3px',
     },
@@ -498,10 +495,6 @@ const useStyles = makeStyles((theme) => ({
         right: theme.spacing(0),
         top: theme.spacing(0),
         color: theme.palette.grey[500],
-    },
-    listCard: {
-        display: 'flex',
-        flexDirection: 'column',
     },
     siteMap: {
         display: 'flex',

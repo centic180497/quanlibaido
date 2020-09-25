@@ -1,12 +1,13 @@
 import { Options } from 'types/client'
+import axios from 'axios'
 
 const HEADER_AUTH = 'Authorization'
 const HEADER_BEARER = 'BEARER'
 
 export default class Client {
     token = ''
-    url = ''
-    urlVersion = '/api/v4'
+    url = 'http://10.49.46.251:9003'
+    urlVersion = '/api/v1'
     defaultHeaders: { [x: string]: string } = {}
     userId = ''
     userRole?: string
@@ -39,39 +40,77 @@ export default class Client {
         this.userRole = userRole
     }
 
-    getBaseRoute(){
+    getBaseRoute() {
         return `${this.url}${this.urlVersion}`
     }
 
-    getUsersRoute(){
+    getUsersRoute() {
         return `${this.getBaseRoute()}/users`
     }
 
-    getParkingRoute(){
+    getParkingRoute() {
         return `${this.getBaseRoute()}/parking`
     }
 
-    getNoParkingRoute(){
+    getNoParkingRoute() {
         return `${this.getBaseRoute()}/no_parking`
     }
 
+    getPolitical() {
+        return `${this.getBaseRoute()}/political`
+    }
+
     getOptions(options: Options) {
-        const headers: { [x: string]: string } = {
-            ...this.defaultHeaders,
+        // const headers: { [x: string]: string } = {
+        //     ...this.defaultHeaders,
+        // }
+
+        // return { ...headers }
+
+        const newOptions = { ...options }
+        let headers = { ...this.defaultHeaders }
+
+        if (options.headers) {
+            headers = { ...headers, ...options.headers }
         }
-        
-        return { ...headers }
+
+        if (this.token) {
+            headers[HEADER_AUTH] = `${HEADER_BEARER} ${this.token}`
+        }
+
+        return { ...newOptions, headers }
     }
 
-    login = (username: string, password: string) => {
-
-    }
+    login = (username: string, password: string) => {}
 
     logout = () => {}
 
-    doFetch = (url: string , options: Options) => {
-
+    getProvinces = async () => {
+        const { data } = await this.doFetchWithResponse(`${this.getPolitical()}/provinces`, { method: 'get', data: {} })
+        return data
     }
-    
-    
+
+    getDistricts = async (id:number) => {
+        const { data } = await this.doFetchWithResponse(`${this.getPolitical()}/districts?province=${id}`, { method: 'get', data: {} })
+        return data
+    }
+
+    getCommunes = async (id:string) => {
+        const { data } = await this.doFetchWithResponse(`${this.getPolitical()}/communes?district=${id}`, { method: 'get', data: {} })
+        return data
+    }
+
+    // doFetch = async (url: string, options: Options) => {
+    //     const { data } = await this.doFetchWithResponse(url, options)
+    // }
+
+    doFetchWithResponse = async (url: string, options: Options) => {
+        try {
+            const response = await axios({ url: url, ...this.getOptions(options) })
+            const { data, headers } = response
+            return { data, headers }
+        } catch (error) {
+            throw error.response?.data?.data
+        }
+    }
 }
