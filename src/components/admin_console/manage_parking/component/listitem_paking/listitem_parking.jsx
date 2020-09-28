@@ -142,7 +142,7 @@ function Listitem(props) {
     return (
         <div className={classes.cameras}>
             <h4 className={classes.title}>
-                DANH SACH CAMERA (<span>8</span>)
+                    DANH SÁCH BÃI ĐỖ (<span>8</span>)
             </h4>
             <div className={classes.boxScrollCard}>
                 <Scrollbars>

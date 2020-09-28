@@ -233,9 +233,9 @@ const useStyles = makeStyles((theme) => ({
         background: '#ffffff',
     },
     listCard: {
-        right: '60px',
+        right: '70px',
         position: 'absolute',
-        bottom: '25px',
+        bottom: '5px',
     },
     tablist: {
         width: 400,

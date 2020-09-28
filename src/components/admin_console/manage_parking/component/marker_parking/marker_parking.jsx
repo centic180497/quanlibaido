@@ -1,9 +1,10 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Marker, InfoWindow } from 'react-google-maps'
+import { withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MarkerWithLabel } from 'react-google-maps/lib/components/addons/MarkerWithLabel'
 import './marker.css'
+import icon from "assets/images/ic_parking.png"
 function MarkerParking(props) {
     const classes = useStyles()
     const { marker, lat, lng, id, showInfowindow } = props
@@ -13,24 +14,23 @@ function MarkerParking(props) {
     const handleToggle = () => {
         props.cancleInforwindow()
     }
-    var iconmarker = renderToStaticMarkup(
-        <div className="marker">
-        <div className="pin">
-            <div className="tag">
-                <strong />
-            </div>
-            <div className="background" style={{ backgroundImage: 'url(${this.url})' }} />
-        </div>
-    </div>
-    )
-    var icon = {
-        path: 'M0,5a5,5 0 1,0 10,0a5,10 0 10,0 -10,0',
-        fillOpacity: 1,
-        strokeWeight: 5,
+    // var iconmarker = renderToStaticMarkup(
+    //     <div className="marker">
+    //     <div className="pin">
+    //         <div className="tag">
+    //             <strong />
+    //         </div>
+    //         <div className="background" style={{ backgroundImage: 'url(${this.url})' }} />
+    //     </div>
+    // </div>
+    // )
+    var iconmarker = {
+        url: icon,
+        scaledSize: new window.google.maps.Size(40,40)
     }
     return (
         <div>
-            {/* <MarkerWithLabel position={{ lat: lat, lng: lng }} key={id}>
+            {/* <MarkerWithLabel>
                 <div className="marker">
                     <div className="pin">
                         <div className="tag">
@@ -39,7 +39,7 @@ function MarkerParking(props) {
                         <div className="background" style={{ backgroundImage: 'url(${this.url})' }} />
                     </div>
                 </div>
-            </MarkerWithLabel> */}
+            </MarkerWithLabel>  */}
            
 
             <Marker
@@ -48,7 +48,7 @@ function MarkerParking(props) {
                 onClick={(e) => {
                     markerClick(marker.id)
                 }}
-                icon={icon}
+                icon={iconmarker}
             >
             
                 {id === props.infowindow && (
@@ -56,7 +56,7 @@ function MarkerParking(props) {
                         <p>skhvusids</p>
                     </InfoWindow>
                 )}
-            </Marker>
+            </Marker> 
         </div>
     )
 }
