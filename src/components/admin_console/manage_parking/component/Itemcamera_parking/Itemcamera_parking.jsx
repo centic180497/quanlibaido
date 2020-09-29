@@ -6,6 +6,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 function ItemParking(props) {
     const classes = useStyles()
     const { camera, editFormData, infowindow } = props
+    console.log("camera",camera);
     const [open, setOpen] = React.useState(false)
     const showformdata = (camera) => {
         editFormData(camera)
@@ -21,16 +22,18 @@ function ItemParking(props) {
     const handleClose = (e) => {
         setOpen(false)
     }
+    
+    
     return (
         <div className={classes.listitem}>
             <Card className={infowindow === camera.id ? classes.cardActive : classes.card} onClick={(e) => itemActive(e, camera.id)}>
                 <div className={classes.image}></div>
                 <CardContent className={classes.contentCard}>
                     <Typography gutterBottom variant="h5" className={classes.nameCamera}>
-                        {camera.nameCamera}
+                        {camera.description}
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p" className={classes.address} noWrap>
-                        {camera.address}
+                        {camera.district}
                     </Typography>
                     <CardActions className={classes.cardActions}>
                         <Tooltip title="Xóa" arrow className={classes.tooltip}>

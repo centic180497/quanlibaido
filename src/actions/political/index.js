@@ -24,7 +24,6 @@ export const fetchDistrics = (id) => {
             data = await Client.getDistricts(id)
         } catch (error) {
             dispatch(actions.fetchDistrictsFailed(error))
-            console.log('error', error)
             return error
         }
 

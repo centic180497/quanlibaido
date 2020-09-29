@@ -1,8 +1,11 @@
 import * as types from 'action_types/manage_parking'
 const INITIAL_STATE = {
+    manageParking: [],
+    loading: false,
     showformadd: false,
     editFormData: null,
     idEditForm: -1,
+    err:null,
     isAddingParking: false,
     isEditingParking: false,
     zoom: 13,
@@ -23,7 +26,7 @@ const reducer_manage_parking = (state = INITIAL_STATE, action) => {
             }
         case types.CANCLE_FORM_ADD_PARKING:
             return {
-                ...state,
+                // ...state,
                 showformadd: false,
                 isAddingParking: false,
                 isEditingParking: false,
@@ -71,7 +74,37 @@ const reducer_manage_parking = (state = INITIAL_STATE, action) => {
                 ...state,
                 infowindow: -1,
             }
-
+        case types.MANAGE_PARKING.GET_MANAGE_PARKING_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            }
+        case types.MANAGE_PARKING.GET_MANAGE_PARKING_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                manageParking: action.data,
+            }
+        case types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            }
+        case types.MANAGE_PARKING.ADD_MANAGE_PARKING_SUCCESS:
+            console.log(action);
+            
+            const manageParking = manageParking.push(action.data)
+            return {
+                ...state,
+                loading:false,
+                manageParking: manageParking,
+            }
+        case types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST:
+            return {
+                ...state,
+                loading: false,
+                err:action.err
+            }
         default:
             return state
     }

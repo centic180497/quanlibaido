@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Scrollbars } from 'react-custom-scrollbars'
-
+import { isEmpty } from 'lodash'
 import ItemParking from '../Itemcamera_parking'
 
 function Listitem(props) {
     const classes = useStyles()
+    console.log(props.parking.Camera)
+
     const [listCamera] = useState([
         {
             id: 1,
@@ -142,22 +144,14 @@ function Listitem(props) {
     return (
         <div className={classes.cameras}>
             <h4 className={classes.title}>
-                    DANH SÁCH BÃI ĐỖ (<span>8</span>)
+                DANH SÁCH BÃI ĐỖ (<span>8</span>)
             </h4>
             <div className={classes.boxScrollCard}>
                 <Scrollbars>
                     <div className={classes.boxCameraItem}>
-                        {listCamera.length > 0
-                            ? listCamera.map((camera, index) => {
-                                  return (
-                                      <ItemParking
-                                          camera={camera}
-                                          key={index}
-                                          showdata={props.showdata}
-                                          itemcamera={props.itemcamera}
-                                          showpopup={props.showpopup}
-                                      />
-                                  )
+                        {!isEmpty(props.parking.Camera)
+                            ? props.parking.Camera.map((camera, index) => {
+                                  return <ItemParking camera={camera} key={index} showdata={props.showdata} showpopup={props.showpopup} />
                               })
                             : null}
                     </div>

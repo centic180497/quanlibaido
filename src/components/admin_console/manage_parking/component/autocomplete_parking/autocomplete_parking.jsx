@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { TextField, FormGroup, Checkbox } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
@@ -12,9 +12,7 @@ function AutocompleteCheckbox(props) {
     const [value, Setvalue] = useState('')
     const [valueDistrict, SetvalueDistrict] = useState([])
     const [valueCommuns, SetvalueCommuns] = useState([])
-    useEffect(() => {
-        props.fetchProvinces()
-    }, [])
+
     const handleProvinceChange = (e, value) => {
         Setvalue(value)
         if (value.length === 0) {
@@ -45,7 +43,7 @@ function AutocompleteCheckbox(props) {
                     multiple
                     size="small"
                     options={props.option || []}
-                    getOptionLabel={(option) => option.name || []}
+                    getOptionLabel={props.option.length > 0 ? (option) => option.name : []}
                     noOptionsText={'Không có lựa chọn'}
                     // disableCloseOnSelect
                     value={option.name}
@@ -75,7 +73,7 @@ function AutocompleteCheckbox(props) {
                     multiple
                     size="small"
                     options={props.districts.length > 0 ? props.districts : []}
-                    getOptionLabel={(option) => option.name || []}
+                    getOptionLabel={props.districts.length > 0 ? (option) => option.name : []}
                     noOptionsText={'Không có lựa chọn'}
                     // disableCloseOnSelect
                     value={value.length > 0 ? valueDistrict : ''}
@@ -105,7 +103,7 @@ function AutocompleteCheckbox(props) {
                     multiple
                     size="small"
                     options={props.communes.length > 0 ? props.communes : []}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={props.communes.length > 0 ? (option) => option.name : []}
                     noOptionsText={'Không có lựa chọn'}
                     // disableCloseOnSelect
                     value={value.length > 0 || valueDistrict > 0 ? valueCommuns : []}

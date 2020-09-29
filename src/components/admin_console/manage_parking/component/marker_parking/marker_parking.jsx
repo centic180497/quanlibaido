@@ -1,12 +1,10 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import { withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { MarkerWithLabel } from 'react-google-maps/lib/components/addons/MarkerWithLabel'
+// import { makeStyles } from '@material-ui/core/styles'
+import { Marker, InfoWindow } from 'react-google-maps'
 import './marker.css'
 import icon from "assets/images/ic_parking.png"
 function MarkerParking(props) {
-    const classes = useStyles()
+    // const classes = useStyles()
     const { marker, lat, lng, id, showInfowindow } = props
     const markerClick = (id) => {
         showInfowindow(id)
@@ -14,16 +12,6 @@ function MarkerParking(props) {
     const handleToggle = () => {
         props.cancleInforwindow()
     }
-    // var iconmarker = renderToStaticMarkup(
-    //     <div className="marker">
-    //     <div className="pin">
-    //         <div className="tag">
-    //             <strong />
-    //         </div>
-    //         <div className="background" style={{ backgroundImage: 'url(${this.url})' }} />
-    //     </div>
-    // </div>
-    // )
     var iconmarker = {
         url: icon,
         scaledSize: new window.google.maps.Size(40,40)
@@ -43,7 +31,7 @@ function MarkerParking(props) {
            
 
             <Marker
-                position={{ lat: lat, lng: lng }}
+                position={{ lat:parseFloat(lat), lng:parseFloat(lng)}}
                 key={id}
                 onClick={(e) => {
                     markerClick(marker.id)
@@ -63,24 +51,6 @@ function MarkerParking(props) {
 
 export default MarkerParking
 
-const useStyles = makeStyles((theme) => ({
-    // pin: {
-    //     width: 34,
-    //     height: 37,
-    //     backgroundImage: 'linear-gradient(#9C27B0, #3F51B5)',
-    //     borderRadius: '50%',
-    //     padding: 3,
-    //     position: 'relative',
-    //     cursor: 'pointer',
-    //     transition: '.3s ease-in-out',
-    // },
-    // tag: {},
-    // background: {
-    //     width: '100%',
-    //     height: '100',
-    //     borderRadius: '50%',
-    //     backgroundSize: 'cover',
-    //     border: '2px solid white',
-    //     boxSizing: 'border-box',
-    // },
-}))
+// const useStyles = makeStyles((theme) => ({
+
+// }))

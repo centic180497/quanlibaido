@@ -7,6 +7,7 @@ import Radio from '@material-ui/core/Radio'
 import { RadioGroup, Tooltip } from '@material-ui/core'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined'
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 function FormAddPage(props) {
     const defaultValues = props.editFormData ? props.editFormData : { type: '1' }
     const { register, handleSubmit, errors, control, setValue, watch, getValues } = useForm({
@@ -21,10 +22,10 @@ function FormAddPage(props) {
     const nameErrorText = isNameError ? 'Tên bãi đỗ không được để trống' : ''
 
     const isLatError = errors.lat && errors.lat.type === 'required'
-    const latErrorText = isNameError ? 'kinh độ không được để trống' : ''
+    const latErrorText = isLatError ? 'kinh độ không được để trống' : ''
 
     const isLngError = errors.lng && errors.lng.type === 'required'
-    const lngErrorText = isNameError ? 'Vĩ độ không được để trống' : ''
+    const lngErrorText = isLngError ? 'Vĩ độ không được để trống' : ''
 
     const isDescriptionError = errors.total && errors.total.type === 'required'
     const descriptionErrorText = isDescriptionError ? 'Tổng số chỗ không được để trống' : ''
@@ -41,11 +42,13 @@ function FormAddPage(props) {
     const communsError = errors.communs && errors.communs.type === 'required'
     const typecommunsErrorText = provinceError ? 'Phường không được để trống' : ''
 
-    const onSubmit = handleSubmit((updatedData) => {
+    const onSubmit = handleSubmit((updatedData,e) => {
+        e.isPropagationStopped()
         const param = { ...updatedData }
         param['lat'] = getValues('lat')
         param['lng'] = getValues('lng')
         console.log(param)
+        props.addManageParking(param)
     })
     const classes = useStyles()
 
@@ -55,10 +58,13 @@ function FormAddPage(props) {
         { id: 3, name: 'Quan Ngu Hanh Son' },
     ])
     const [valueprovince, Setvalueprovince] = useState('')
-    const [valueDistrict, SetvalueDistrict] = useState('')
-    const [valueCommuns, SetvalueCommuns] = useState('')
+    const [valueDistrict, SetvalueDistrict] = useState([])
+    const [valueCommuns, SetvalueCommuns] = useState([])
+    const [open, setOpen] = React.useState(false)
     const { option } = props
-
+    const handleClose = (e) => {
+        setOpen(false)
+    }
     useEffect(() => {
         if (fields.length === 0) {
             setValue('type', '1')
@@ -70,39 +76,50 @@ function FormAddPage(props) {
     const lat = watch('lat')
     const lng = watch('lng')
 
-
     useEffect(() => {
         // setValue('lat',lat)
         // setValue('lng',lng)
         setValue('type', type)
         setValue('typedue', typedue)
-    }, [type, typedue,lat,lng])
-  
-
+    }, [type, typedue, lat, lng])
     const cancleModal = (e) => {
-        
-        const { lat, lng, type } = control.defaultValuesRef.current
+        console.log("EEE22",e);
+        e.isPropagationStopped()
+        const { lat, lng, nameCamera, totalSlot, type, communs, typedue } = control.defaultValuesRef.current
         if (props.editFormData) {
-            if (getValues('lat') !== lat.toString() || getValues('lng') !== lng.toString()) {
-                alert('da thay doi data')
+            if (
+                getValues('lat') !== lat.toString() ||
+                getValues('lng') !== lng.toString() ||
+                getValues('total') !== totalSlot.toString() ||
+                getValues('name') !== nameCamera.toString()
+            ) {
+                setOpen(true)
+            } else {
+                props.cancleFormParking()
             }
-            props.clearProvince()
-         
         } else {
-   
-            
-            if (getValues('lat')  !== "Kinh độ" || getValues('lng')  !== "Vĩ độ") {
-        
-                alert('da thay doi data')
-                Setvalueprovince("")
-                SetvalueDistrict("")
-                SetvalueCommuns('')
+            if (
+                getValues('lat') !== 'Kinh độ' ||
+                getValues('lng') !== 'Vĩ độ' ||
+                getValues('name') !== '' ||
+                getValues('province') !== '' ||
+                getValues('distric') !== '' ||
+                getValues('communs') !== '' ||
+                getValues('typedue') !== '' ||
+                getValues('total') !== ''
+            ) {
+                setOpen(true)
+            } else {
+                props.clearProvince()
+                props.clearDistricts()
+                props.cancleFormParking()
             }
-            Setvalueprovince("")
-            SetvalueDistrict("")
-            SetvalueCommuns('')
-            props.cancleFormParking()
         }
+    }
+    const handleButton = (e) => {
+        props.cancleFormParking()
+        props.clearProvince()
+        props.clearDistricts()
     }
     const handleChange = (event) => {
         setValue('type', event.target.value)
@@ -111,8 +128,8 @@ function FormAddPage(props) {
         Setvalueprovince(value)
         if (value === null) {
             props.clearProvince()
-            SetvalueDistrict("")
-            SetvalueCommuns("")
+            SetvalueDistrict('')
+            SetvalueCommuns('')
         } else {
             const id = value.code
 
@@ -121,11 +138,10 @@ function FormAddPage(props) {
     }
     const handleDistrictChange = (e, value) => {
         SetvalueDistrict(value)
-        console.log(value)
 
         if (value === null) {
             props.clearDistricts()
-            SetvalueCommuns("")
+            SetvalueCommuns('')
         } else {
             const id = value.code
 
@@ -135,9 +151,6 @@ function FormAddPage(props) {
     const handleCommunsChange = (e, value) => {
         SetvalueCommuns(value)
     }
-    console.log("valueprovince",valueprovince);
-    console.log("valueDistrict",valueDistrict);
-    console.log("valueCommuns",valueCommuns);
     return (
         <div className={classes.wrapGrid}>
             <Paper className={classes.listmenu}>
@@ -145,7 +158,6 @@ function FormAddPage(props) {
                     <Tab className={classes.customTab} label={props.editFormData ? 'CẤU HÌNH BÃI ĐỖ' : 'THÊM MỚI BÃI ĐỖ'} />
                 </Tabs>
             </Paper>
-
             <div className={classes.formControl}>
                 <form onSubmit={onSubmit} autoComplete="off">
                     <div>
@@ -153,7 +165,7 @@ function FormAddPage(props) {
                             size="small"
                             autoFocus
                             fullWidth
-                            type="text"
+                            type="name"
                             label="Tên bãi đỗ "
                             name="name"
                             variant="outlined"
@@ -172,8 +184,10 @@ function FormAddPage(props) {
                                 type="lat"
                                 name="lat"
                                 id="outlined-disabled"
+                                helperText={latErrorText}
+                                error={isLatError}
                                 label="Kinh Độ"
-                                defaultValue={props.editFormData?.lat || "Kinh độ"}
+                                defaultValue={props.editFormData?.lat || 'Kinh độ'}
                                 variant="outlined"
                                 value={props.editFormData ? props.editFormData.lat : props.isAdding.lat}
                                 inputRef={register({ required: true })}
@@ -185,9 +199,11 @@ function FormAddPage(props) {
                                 disabled
                                 name="lng"
                                 type="lng"
+                                helperText={lngErrorText}
+                                error={isLngError}
                                 id="outlined-disabled"
                                 label="Vĩ Độ"
-                                defaultValue={props.editFormData?.lng || "Vĩ độ"}
+                                defaultValue={props.editFormData?.lng || 'Vĩ độ'}
                                 value={props.editFormData ? props.editFormData.lng : props.isAdding.lng}
                                 variant="outlined"
                                 inputRef={register({ required: true })}
@@ -199,8 +215,8 @@ function FormAddPage(props) {
                             <Autocomplete
                                 // multiple
                                 id="tags-outlined"
-                                options={props.option||[] }
-                                getOptionLabel={(option) => option.name||[]}
+                                options={props.option || []}
+                                getOptionLabel={(option) => (option.name ? option.name : '')}
                                 noOptionsText={'Không có lựa chọn'}
                                 disableCloseOnSelect
                                 value={option.name}
@@ -210,7 +226,7 @@ function FormAddPage(props) {
                                         helperText={typeprovinceErrorText}
                                         error={provinceError}
                                         name="province"
-                                        label="Thành phố"
+                                        label="Tỉnh/Thành phố"
                                         size="small"
                                         variant="outlined"
                                         fullWidth
@@ -225,11 +241,11 @@ function FormAddPage(props) {
                             <Autocomplete
                                 // multiple
                                 id="tags-outlined"
-                                options={props.districts }
-                                getOptionLabel={(option) => option.name}
+                                options={props.districts.length > 0 ? props.districts : []}
+                                getOptionLabel={(option) => (option.name ? option.name : '')}
                                 noOptionsText={'Không có lựa chọn'}
                                 disableCloseOnSelect
-                                value={valueprovince ? valueDistrict : ""}
+                                value={valueprovince ? valueDistrict : ''}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -251,11 +267,11 @@ function FormAddPage(props) {
                             <Autocomplete
                                 // multiple
                                 id="tags-outlined"
-                                options={ props.communes}
-                                getOptionLabel={(option) => option.name}
+                                options={props.communes.length > 0 ? props.communes : []}
+                                getOptionLabel={(option) => (option.name ? option.name : '')}
                                 noOptionsText={'Không có lựa chọn'}
                                 disableCloseOnSelect
-                                value={valueprovince  ? valueCommuns :""}
+                                value={valueprovince ? valueCommuns : ''}
                                 renderInput={(params) => (
                                     <TextField
                                         error={communsError}
@@ -278,7 +294,7 @@ function FormAddPage(props) {
                                 // multiple
                                 id="tags-outlined"
                                 options={districts}
-                                getOptionLabel={(option) => option.name}
+                                getOptionLabel={(option) => (option.name ? option.name : '')}
                                 noOptionsText={'Không có lựa chọn'}
                                 disableCloseOnSelect
                                 renderInput={(params) => (
@@ -391,6 +407,24 @@ function FormAddPage(props) {
                               )
                           })
                         : null}
+                    {open ? (
+                        <div className={classes.dialog}>
+                            <Dialog open={open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                                {/* <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle> */}
+                                <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">Bạn có chắc chắn muốn hủy không</DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button color="primary" onClick={(e) => handleClose(e)}>
+                                        Quay Lại
+                                    </Button>
+                                    <Button color="primary" autoFocus onClick={(e) => handleButton(e)}>
+                                        Đồng Ý
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </div>
+                    ) : null}
                     {(type || defaultValues.type.toString()) === '2' ? (
                         <div className={classes.buttonappen}>
                             <Button type="button" variant="contained" color="primary" onClick={() => append({})}>

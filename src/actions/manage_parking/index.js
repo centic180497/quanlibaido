@@ -43,3 +43,38 @@ export function cancleInforwindow(){
         type:Types.CANCLE_INFOWINDOW
     }
 }
+export function getParkingRequest(){
+    return{
+        type:Types.MANAGE_PARKING.GET_MANAGE_PARKING_REQUEST
+    }
+}
+export function getParkingSuccess(data){
+    return{
+        type:Types.MANAGE_PARKING.GET_MANAGE_PARKING_SUCCESS,
+        data
+    }
+}
+export function getParkingFailed(err){
+    return{
+        type:Types.MANAGE_PARKING.GET_MANEGE_PARKING_FAILED,
+        err
+    }
+}
+export function addManageParkingRequest(data){
+    return{
+        type:Types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST,
+        data
+    }
+}
+export function addManageParkingSuccess(data){
+    return{
+        type:Types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST,
+        data
+    }
+}
+export function addManageParkingFailed(err){
+    return{
+        type:Types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST,
+        err
+    }
+}

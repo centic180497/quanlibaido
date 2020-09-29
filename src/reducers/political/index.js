@@ -85,6 +85,10 @@ const political = (state = initialState, action) => {
             }
         default:
             return state
+        
+        
+            
+            
     }
 }
 export default political

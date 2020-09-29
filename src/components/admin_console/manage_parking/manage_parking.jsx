@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Tooltip, Paper, Tabs, Tab, Fab } from '@material-ui/core'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Add as AddIcon } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
 import Seach from './component/seach_parking/seach_parking'
-import Listitem from './component/listitem_paking/listitem_parking'
+import Listitem from './component/listitem_paking'
 import FormAddPage from './component/form_parking'
 import { isEmpty } from 'lodash'
 import { GoogleMap } from 'react-google-maps'
@@ -148,6 +148,10 @@ function ManageParking(props) {
             description: 'abcdabcd',
         },
     ]
+    useEffect(() => {
+        props.fetchManageParking()
+        props.fetchProvinces()
+    }, [])
     const handleMap = (e) => {
         let lat = e.latLng.lat()
         let lng = e.latLng.lng()
@@ -185,7 +189,7 @@ function ManageParking(props) {
                         </div>
 
                         <div className={classes.listCard}>
-                            <Tooltip title="Add" aria-label="add">
+                            <Tooltip title="Thêm" aria-label="add">
                                 <Fab color="primary" className={classes.fab} onClick={(e) => showModal(e)}>
                                     <AddIcon />
                                 </Fab>
@@ -201,7 +205,7 @@ function ManageParking(props) {
             </div>
             <div className={classes.GoogleMap}>
                 <GoogleMapControlled>
-                    <GoogleMap center={{ lat: +16.07264, lng: +108.229916 }} zoom={props.zoom} onClick={(e) => handleMap(e)}>
+                    <GoogleMap center={{ lat:parseFloat(16.07264), lng:parseFloat(108.229916) }} zoom={props.zoom} onClick={(e) => handleMap(e)}>
                         {listCamera
                             ? listCamera.map((marker, index) => {
                                   if (marker.id === props.idEditForm && props.isEditingParking) return null
@@ -246,7 +250,7 @@ const useStyles = makeStyles((theme) => ({
         background: '#FFFFFF',
         maxHeight: '100%',
         overflow: 'hidden',
-        width:'400px'
+        width: '400px',
     },
     listseach: {
         height: '100%',

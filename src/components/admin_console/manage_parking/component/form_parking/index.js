@@ -3,7 +3,7 @@ import { cancleFormParking } from 'actions/manage_parking/index'
 import FormAddPage from './form_parking'
 import {fetchProvinces,fetchDistrics,fetchCommunes} from 'actions/political/index'
 import {clearProvince,clearDistricts} from 'actions/political/action_political'
-
+import {addManageParking} from 'actions/manage_parking/manage_parking'
 
 
 const mapStateToProps = ({ manageparking,political }) => ({
@@ -23,5 +23,6 @@ export default connect(mapStateToProps, {
     fetchDistrics,
     fetchCommunes,
     clearProvince,
-    clearDistricts
+    clearDistricts,
+    addManageParking
 })(FormAddPage)

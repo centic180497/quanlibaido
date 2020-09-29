@@ -11,6 +11,7 @@ export default class Client {
     defaultHeaders: { [x: string]: string } = {}
     userId = ''
     userRole?: string
+    urlparking='https://blog-api-linh.herokuapp.com'
 
     getUrl() {
         return this.url
@@ -43,13 +44,18 @@ export default class Client {
     getBaseRoute() {
         return `${this.url}${this.urlVersion}`
     }
+    //apifake
+    getBaseRouteparking(){
+        return `${this.urlparking}${this.urlVersion}`
+    }
+    //
 
     getUsersRoute() {
         return `${this.getBaseRoute()}/users`
     }
 
     getParkingRoute() {
-        return `${this.getBaseRoute()}/parking`
+        return `${this.getBaseRouteparking()}/parking`
     }
 
     getNoParkingRoute() {
@@ -88,6 +94,19 @@ export default class Client {
     getProvinces = async () => {
         const { data } = await this.doFetchWithResponse(`${this.getPolitical()}/provinces`, { method: 'get', data: {} })
         return data
+    }
+    getManageParking= async()=>{
+        const {data}= await this.doFetchWithResponse(`${this.getParkingRoute()}`,{method:'get',data:{}})
+        return data
+    }
+    addManageParking= async(value:object)=>{
+        console.log(value);
+        const {data}= await this.doFetchWithResponse(`${this.getParkingRoute()}`,{method:'post',data:{...value
+        }})
+        console.log(data);
+        return data
+
+        
     }
 
     getDistricts = async (id:number) => {
