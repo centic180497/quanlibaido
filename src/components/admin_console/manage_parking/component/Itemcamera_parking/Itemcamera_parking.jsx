@@ -6,12 +6,15 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 function ItemParking(props) {
     const classes = useStyles()
     const { camera, editFormData, infowindow } = props
-    console.log("camera",camera);
     const [open, setOpen] = React.useState(false)
+    console.log(camera)
+
     const showformdata = (camera) => {
         editFormData(camera)
     }
     const itemActive = (e, id) => {
+        console.log(id)
+
         e.stopPropagation()
         props.showInfowindow(id)
     }
@@ -22,22 +25,28 @@ function ItemParking(props) {
     const handleClose = (e) => {
         setOpen(false)
     }
-    
-    
+    const deleteParking = (e, id) => {
+        e.stopPropagation()
+        console.log(id, 'id')
+
+        props.deleteManageParking(id)
+        setOpen(false)
+    }
+
     return (
         <div className={classes.listitem}>
-            <Card className={infowindow === camera.id ? classes.cardActive : classes.card} onClick={(e) => itemActive(e, camera.id)}>
+            <Card className={infowindow === camera._id ? classes.cardActive : classes.card} onClick={(e) => itemActive(e, camera._id)}>
                 <div className={classes.image}></div>
                 <CardContent className={classes.contentCard}>
-                    <Typography gutterBottom variant="h5" className={classes.nameCamera}>
-                        {camera.description}
+                    <Typography gutterBottom className={classes.nameCamera} >
+                        {camera.name}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p" className={classes.address} noWrap>
+                    <Typography variant="body2" color="textSecondary" component="p" className={classes.address}>
                         {camera.district}
                     </Typography>
                     <CardActions className={classes.cardActions}>
                         <Tooltip title="Xóa" arrow className={classes.tooltip}>
-                            <IconButton size="small" onClick={(e) => showAlert(e)}>
+                            <IconButton size="small" onClick={(e) => showAlert(e, camera.id)}>
                                 <DeleteIcon className={classes.icon} />
                             </IconButton>
                         </Tooltip>
@@ -60,7 +69,7 @@ function ItemParking(props) {
                             <Button color="primary" onClick={(e) => handleClose(e)}>
                                 Disagree
                             </Button>
-                            <Button color="primary" autoFocus>
+                            <Button color="primary" autoFocus onClick={(e) => deleteParking(e, camera._id)}>
                                 Agree
                             </Button>
                         </DialogActions>
@@ -102,6 +111,7 @@ const useStyles = makeStyles((theme) => ({
     },
     contentCard: {
         padding: '6px 0px 0 20px !important',
+        flex:1
     },
     nameCamera: {
         fontSize: 16,

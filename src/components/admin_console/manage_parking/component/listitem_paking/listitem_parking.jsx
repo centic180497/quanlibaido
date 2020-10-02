@@ -3,11 +3,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { isEmpty } from 'lodash'
 import ItemParking from '../Itemcamera_parking'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 function Listitem(props) {
-    const classes = useStyles()
-    console.log(props.parking.Camera)
+    console.log(props.loading)
 
+    const classes = useStyles()
     const [listCamera] = useState([
         {
             id: 1,
@@ -141,16 +142,23 @@ function Listitem(props) {
         },
     ])
 
+    console.log(props.parking, 'parking')
+
     return (
         <div className={classes.cameras}>
             <h4 className={classes.title}>
                 DANH SÁCH BÃI ĐỖ (<span>8</span>)
             </h4>
+            {props.loading ? (
+                <div className={classes.loading}>
+                    <CircularProgress />
+                </div>
+            ) : null}
             <div className={classes.boxScrollCard}>
                 <Scrollbars>
                     <div className={classes.boxCameraItem}>
-                        {!isEmpty(props.parking.Camera)
-                            ? props.parking.Camera.map((camera, index) => {
+                        {props.parking.length > 0
+                            ? props.parking.map((camera, index) => {
                                   return <ItemParking camera={camera} key={index} showdata={props.showdata} showpopup={props.showpopup} />
                               })
                             : null}
@@ -168,14 +176,19 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         flexGrow: 1,
+        height:'100%'
     },
     boxScrollCard: {
-        height: '100vh',
+        flex:1,
+        paddingBottom:'50px'
     },
     title: {
         margin: 10,
     },
     boxCameraItem: {
         padding: '0 10px',
+    },
+    loading: {
+        margin: '0 auto',
     },
 }))

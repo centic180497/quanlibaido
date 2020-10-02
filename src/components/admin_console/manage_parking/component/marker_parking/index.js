@@ -9,5 +9,6 @@ const mapStateToProps = ({ manageparking }) => ({
 
 export default connect(mapStateToProps, {
     showInfowindow,
-    cancleInforwindow
+    cancleInforwindow,
+    
 })(MarkerParking)

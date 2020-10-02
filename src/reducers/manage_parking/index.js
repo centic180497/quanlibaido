@@ -4,8 +4,8 @@ const INITIAL_STATE = {
     loading: false,
     showformadd: false,
     editFormData: null,
-    idEditForm: -1,
-    err:null,
+    idEditForm: null,
+    err: null,
     isAddingParking: false,
     isEditingParking: false,
     zoom: 13,
@@ -26,7 +26,7 @@ const reducer_manage_parking = (state = INITIAL_STATE, action) => {
             }
         case types.CANCLE_FORM_ADD_PARKING:
             return {
-                // ...state,
+                ...state,
                 showformadd: false,
                 isAddingParking: false,
                 isEditingParking: false,
@@ -40,12 +40,14 @@ const reducer_manage_parking = (state = INITIAL_STATE, action) => {
                 infowindow: -1,
             }
         case types.EDIT_FORM_DATA:
+            console.log( action.payload._id);
+            
             return {
                 ...state,
                 isEditingParking: true,
                 showformadd: true,
                 editFormData: action.payload,
-                idEditForm: action.payload.id,
+                idEditForm: action.payload._id,
                 zoom: 18,
             }
         case types.IS_ADDING_PARKING:
@@ -57,9 +59,12 @@ const reducer_manage_parking = (state = INITIAL_STATE, action) => {
                 },
             }
         case types.IS_EDITTING_PARKING:
+            console.log('action',action);
+            
             return {
                 ...state,
                 editFormData: {
+                    ...state.editFormData,
                     lat: action.lat,
                     lng: action.lng,
                 },
@@ -83,7 +88,7 @@ const reducer_manage_parking = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 loading: false,
-                manageParking: action.data,
+                manageParking: action.data.Camera,
             }
         case types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST:
             return {
@@ -91,19 +96,62 @@ const reducer_manage_parking = (state = INITIAL_STATE, action) => {
                 loading: true,
             }
         case types.MANAGE_PARKING.ADD_MANAGE_PARKING_SUCCESS:
-            console.log(action);
-            
-            const manageParking = manageParking.push(action.data)
-            return {
-                ...state,
-                loading:false,
-                manageParking: manageParking,
-            }
-        case types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST:
+            let newManaParking = [...state.manageParking, action.data.Camera]
             return {
                 ...state,
                 loading: false,
-                err:action.err
+                manageParking: newManaParking,
+            }
+        case types.MANAGE_PARKING.ADD_MANAGE_PARKING_FAILED:
+            return {
+                ...state,
+                loading: false,
+                err: action.err,
+            }
+        case types.MANAGE_PARKING.DELETE_MANAGE_PARKING_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            }
+        case types.MANAGE_PARKING.DELETE_MANAGE_PARKING_SUCCESS:
+            console.log(action);
+            
+            // let id = state.manageParking.findIndex((data) => data._id === action.id)     
+            // console.log(id, 'index')
+            // state.manageParking.splice(id)
+            let newManageParking = state.manageParking.filter((index)=>index._id!==action.id)
+            return {
+                ...state,
+                loading: false,
+                manageParking:newManageParking
+            }
+        case types.MANAGE_PARKING.DELETE_MANAGE_PARKING_FAILED:
+            return {
+                ...state,
+                loading: false,
+                err: action.err,
+            }
+        case types.MANAGE_PARKING.EDIT_MANAGE_PARKING_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                err: action.err,
+            }
+        case types.MANAGE_PARKING.EDIT_MANAGE_PARKING_SUCCESS:
+            console.log(action);
+            
+            let index = state.manageParking.findIndex((data) => data._id === action.id)
+            state.manageParking[index]= action.param
+            return {
+                ...state,
+                loading: false,
+              manageParking: [...state.manageParking]
+            }
+        case types.MANAGE_PARKING.EDIT_MANAGE_PARKING_FAILED:
+            return {
+                ...state,
+                loading: false,
+                err: action.err,
             }
         default:
             return state

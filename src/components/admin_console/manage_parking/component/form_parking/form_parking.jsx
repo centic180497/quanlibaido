@@ -6,7 +6,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 import Radio from '@material-ui/core/Radio'
 import { RadioGroup, Tooltip } from '@material-ui/core'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined'
+import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded'
+import { Scrollbars } from 'react-custom-scrollbars'
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 function FormAddPage(props) {
     const defaultValues = props.editFormData ? props.editFormData : { type: '1' }
@@ -41,25 +42,38 @@ function FormAddPage(props) {
 
     const communsError = errors.communs && errors.communs.type === 'required'
     const typecommunsErrorText = provinceError ? 'Phường không được để trống' : ''
-
-    const onSubmit = handleSubmit((updatedData,e) => {
+    console.log(props.editFormData)
+    const onSubmit = handleSubmit((updatedData, e) => {
         e.isPropagationStopped()
         const param = { ...updatedData }
+        console.log("param",param);
+        
         param['lat'] = getValues('lat')
         param['lng'] = getValues('lng')
-        console.log(param)
-        props.addManageParking(param)
+        if (props.editFormData) {
+            const id = props.idEditForm
+
+            props.editManageParking(param, id)
+            props.clearProvince()
+            props.clearDistricts()
+            props.cancleFormParking()
+        } else {
+            props.addManageParking(param)
+            props.clearProvince()
+            props.clearDistricts()
+            props.cancleFormParking()
+        }
     })
     const classes = useStyles()
 
     const [districts] = useState([
-        { id: 1, name: 'Quan Hai Chau' },
-        { id: 2, name: 'Quan Cam Le' },
-        { id: 3, name: 'Quan Ngu Hanh Son' },
+        { id: 1, name: 'Ngoài Lòng Đường' },
+        { id: 2, name: 'Mất Phí' },
     ])
     const [valueprovince, Setvalueprovince] = useState('')
     const [valueDistrict, SetvalueDistrict] = useState([])
     const [valueCommuns, SetvalueCommuns] = useState([])
+    const [number,Setnumber]=useState("")
     const [open, setOpen] = React.useState(false)
     const { option } = props
     const handleClose = (e) => {
@@ -83,16 +97,19 @@ function FormAddPage(props) {
         setValue('typedue', typedue)
     }, [type, typedue, lat, lng])
     const cancleModal = (e) => {
-        console.log("EEE22",e);
         e.isPropagationStopped()
-        const { lat, lng, nameCamera, totalSlot, type, communs, typedue } = control.defaultValuesRef.current
+        const { lat, lng, name, totalSlot, type, communs, typedue } = control.defaultValuesRef.current
+
+
         if (props.editFormData) {
             if (
                 getValues('lat') !== lat.toString() ||
-                getValues('lng') !== lng.toString() ||
-                getValues('total') !== totalSlot.toString() ||
-                getValues('name') !== nameCamera.toString()
+                getValues('lng') !== lng.toString()
+                // getValues('totalSlots').toString()!== totalSlot
+                // getValues('name') !== name
             ) {
+                console.log('vô edit')
+
                 setOpen(true)
             } else {
                 props.cancleFormParking()
@@ -103,11 +120,13 @@ function FormAddPage(props) {
                 getValues('lng') !== 'Vĩ độ' ||
                 getValues('name') !== '' ||
                 getValues('province') !== '' ||
-                getValues('distric') !== '' ||
+                getValues('district') !== '' ||
                 getValues('communs') !== '' ||
                 getValues('typedue') !== '' ||
-                getValues('total') !== ''
+                getValues('totalSlots') !== ''
             ) {
+                console.log('vô add')
+
                 setOpen(true)
             } else {
                 props.clearProvince()
@@ -141,6 +160,7 @@ function FormAddPage(props) {
 
         if (value === null) {
             props.clearDistricts()
+
             SetvalueCommuns('')
         } else {
             const id = value.code
@@ -151,6 +171,12 @@ function FormAddPage(props) {
     const handleCommunsChange = (e, value) => {
         SetvalueCommuns(value)
     }
+    const handleChangeNumber=(event) => {
+        Setnumber(Number(event.target.value))
+      }
+
+    const provinces = props.option.filter((province) => province.code.toString() === '48')
+
     return (
         <div className={classes.wrapGrid}>
             <Paper className={classes.listmenu}>
@@ -159,254 +185,279 @@ function FormAddPage(props) {
                 </Tabs>
             </Paper>
             <div className={classes.formControl}>
-                <form onSubmit={onSubmit} autoComplete="off">
-                    <div>
-                        <TextField
-                            size="small"
-                            autoFocus
-                            fullWidth
-                            type="name"
-                            label="Tên bãi đỗ "
-                            name="name"
-                            variant="outlined"
-                            helperText={nameErrorText}
-                            error={isNameError}
-                            inputRef={register({ required: true })}
-                            className={classes.formInput}
-                            defaultValue={props.editFormData?.nameCamera || ''}
-                        />
-                        <div className={classes.latlng}>
+                <form onSubmit={onSubmit} className={classes.formdata}>
+                    <Scrollbars>
+                        <div>
                             <TextField
                                 size="small"
-                                disabled
                                 autoFocus
                                 fullWidth
-                                type="lat"
-                                name="lat"
-                                id="outlined-disabled"
-                                helperText={latErrorText}
-                                error={isLatError}
-                                label="Kinh Độ"
-                                defaultValue={props.editFormData?.lat || 'Kinh độ'}
+                                type="name"
+                                label="Tên bãi đỗ "
+                                name="name"
                                 variant="outlined"
-                                value={props.editFormData ? props.editFormData.lat : props.isAdding.lat}
+                                helperText={nameErrorText}
+                                error={isNameError}
                                 inputRef={register({ required: true })}
                                 className={classes.formInput}
+                                defaultValue={props.editFormData?.nameCamera || ''}
                             />
-                            <p className={classes.lat}></p>
+                            <div className={classes.latlng}>
+                                <TextField
+                                    size="small"
+                                    disabled
+                                    autoFocus
+                                    fullWidth
+                                    type="lat"
+                                    name="lat"
+                                    id="outlined-disabled"
+                                    helperText={latErrorText}
+                                    error={isLatError}
+                                    label="Kinh Độ"
+                                    defaultValue={props.editFormData?.lat || 'Kinh độ'}
+                                    variant="outlined"
+                                    value={props.editFormData ? props.editFormData.lat : props.isAdding.lat}
+                                    inputRef={register({ required: true })}
+                                    className={classes.formInput}
+                                />
+                                <p className={classes.lat}></p>
+                                <TextField
+                                    size="small"
+                                    disabled
+                                    name="lng"
+                                    type="lng"
+                                    helperText={lngErrorText}
+                                    error={isLngError}
+                                    id="outlined-disabled"
+                                    label="Vĩ Độ"
+                                    defaultValue={props.editFormData?.lng || 'Vĩ độ'}
+                                    value={props.editFormData ? props.editFormData.lng : props.isAdding.lng}
+                                    variant="outlined"
+                                    inputRef={register({ required: true })}
+                                    className={classes.formInput}
+                                />
+                            </div>
+
+                            <div>
+                                <Autocomplete
+                                    // multiple
+                                    id="tags-outlined"
+                                    disableCloseOnSelect={false}
+                                    options={provinces || []}
+                                    getOptionLabel={(option) => (option.name ? option.name : '')}
+                                    noOptionsText={'Không có lựa chọn'}
+                                    value={option.length > 0 || valueprovince ? option.name : ''}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            disableCloseOnSelect={false}
+                                            {...params}
+                                            helperText={typeprovinceErrorText}
+                                            error={provinceError}
+                                            name="province"
+                                            label="Tỉnh/Thành phố"
+                                            size="small"
+                                            variant="outlined"
+                                            fullWidth
+                                            inputRef={register({ required: true })}
+                                        />
+                                    )}
+                                    onChange={(e, value) => handleProvinceChange(e, value)}
+                                    className={classes.formInput}
+                                />
+                            </div>
+                            <div>
+                                <Autocomplete
+                                    // multiple
+                                    disableCloseOnSelect={false}
+                                    id="tags-outlined"
+                                    options={props.districts.length > 0 ? props.districts : []}
+                                    getOptionLabel={(option) => (option.name ? option.name : '')}
+                                    noOptionsText={'Không có lựa chọn'}
+                                    value={props.districts.length > 0 || valueprovince ? valueDistrict : ''}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            disableCloseOnSelect={false}
+                                            error={districError}
+                                            helperText={typedistricErrorText}
+                                            size="small"
+                                            name="district"
+                                            label="Quận/Huyện"
+                                            variant="outlined"
+                                            fullWidth
+                                            inputRef={register({ required: true })}
+                                        />
+                                    )}
+                                    onChange={(e, value) => handleDistrictChange(e, value)}
+                                    className={classes.formInput}
+                                />
+                            </div>
+                            <div>
+                                <Autocomplete
+                                    // multiple
+                                    // open
+                                    disableCloseOnSelect={false}
+                                    id="tags-outlined"
+                                    options={props.communes.length > 0 ? props.communes : []}
+                                    getOptionLabel={(option) => (option.name ? option.name : '')}
+                                    noOptionsText={'Không có lựa chọn'}
+                                    value={props.communes.length > 0 || valueprovince ? valueCommuns : ''}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            disableCloseOnSelect={false}
+                                            error={communsError}
+                                            helperText={typecommunsErrorText}
+                                            {...params}
+                                            name="communs"
+                                            label="Xã/Phường"
+                                            variant="outlined"
+                                            fullWidth
+                                            inputRef={register({ required: true })}
+                                            size="small"
+                                        />
+                                    )}
+                                    onChange={(e, value) => handleCommunsChange(e, value)}
+                                    className={classes.formInput}
+                                />
+                            </div>
+                            <div>
+                                <Autocomplete
+                                    // multiple
+                                    id="tags-outlined"
+                                    options={districts}
+                                    disableCloseOnSelect={false}
+                                    getOptionLabel={(option) => (option.name ? option.name : '')}
+                                    noOptionsText={'Không có lựa chọn'}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            disableCloseOnSelect={false}
+                                            {...params}
+                                            name="typedue"
+                                            label="Loại bãi đỗ"
+                                            variant="outlined"
+                                            error={typedueError}
+                                            helperText={typedueErrorText}
+                                            fullWidth
+                                            inputRef={register({ required: true })}
+                                            size="small"
+                                        />
+                                    )}
+                                    className={classes.formInput}
+                                />
+                            </div>
                             <TextField
                                 size="small"
-                                disabled
-                                name="lng"
-                                type="lng"
-                                helperText={lngErrorText}
-                                error={isLngError}
-                                id="outlined-disabled"
-                                label="Vĩ Độ"
-                                defaultValue={props.editFormData?.lng || 'Vĩ độ'}
-                                value={props.editFormData ? props.editFormData.lng : props.isAdding.lng}
+                                autoFocus
+                                fullWidth
+                                type="tel"
+                                onChange={(event) =>handleChangeNumber(event)}
+                                label="Tổng số chỗ"
+                                name="totalSlots"
                                 variant="outlined"
-                                inputRef={register({ required: true })}
+                                helperText={descriptionErrorText}
+                                error={isDescriptionError}
+                                inputRef={register({ required: true, pattern: /[-+]?[0-9]*[.,]?[0-9]+$/i })}
                                 className={classes.formInput}
+                                defaultValue={props.editFormData?.totalSlot || ''}
+                                // value={number}
+                                
                             />
-                        </div>
+                            {/* {errors.total && errors.total.type==="pattern"? <p>{errors.total.message}</p>:null} */}
+                            {errors.total && errors.total.type === 'pattern' ? <p style={{ color: 'red' }}>Vui lòng nhập số</p> : null}
 
-                        <div>
-                            <Autocomplete
-                                // multiple
-                                id="tags-outlined"
-                                options={props.option || []}
-                                getOptionLabel={(option) => (option.name ? option.name : '')}
-                                noOptionsText={'Không có lựa chọn'}
-                                disableCloseOnSelect
-                                value={option.name}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        helperText={typeprovinceErrorText}
-                                        error={provinceError}
-                                        name="province"
-                                        label="Tỉnh/Thành phố"
-                                        size="small"
-                                        variant="outlined"
-                                        fullWidth
+                            <div className={classes.radio}>
+                                <RadioGroup
+                                    aria-label="quiz"
+                                    name="type"
+                                    className={classes.radiogroup}
+                                    value={type || defaultValues.type.toString()}
+                                    onChange={handleChange}
+                                >
+                                    <FormControlLabel
+                                        value="1"
+                                        control={<Radio color="primary" />}
                                         inputRef={register({ required: true })}
+                                        label="Không thu phí"
                                     />
-                                )}
-                                onChange={(e, value) => handleProvinceChange(e, value)}
-                                className={classes.formInput}
-                            />
-                        </div>
-                        <div>
-                            <Autocomplete
-                                // multiple
-                                id="tags-outlined"
-                                options={props.districts.length > 0 ? props.districts : []}
-                                getOptionLabel={(option) => (option.name ? option.name : '')}
-                                noOptionsText={'Không có lựa chọn'}
-                                disableCloseOnSelect
-                                value={valueprovince ? valueDistrict : ''}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        error={districError}
-                                        helperText={typedistricErrorText}
-                                        size="small"
-                                        name="distric"
-                                        label="Quận/Huyện"
-                                        variant="outlined"
-                                        fullWidth
+                                    <FormControlLabel
+                                        value="2"
+                                        control={<Radio color="primary" />}
                                         inputRef={register({ required: true })}
+                                        label="Thu phí"
+                                        onClick={fields.length === 0 ? () => append({}) : null}
                                     />
-                                )}
-                                onChange={(e, value) => handleDistrictChange(e, value)}
-                                className={classes.formInput}
-                            />
+                                </RadioGroup>
+                            </div>
                         </div>
-                        <div>
-                            <Autocomplete
-                                // multiple
-                                id="tags-outlined"
-                                options={props.communes.length > 0 ? props.communes : []}
-                                getOptionLabel={(option) => (option.name ? option.name : '')}
-                                noOptionsText={'Không có lựa chọn'}
-                                disableCloseOnSelect
-                                value={valueprovince ? valueCommuns : ''}
-                                renderInput={(params) => (
-                                    <TextField
-                                        error={communsError}
-                                        helperText={typecommunsErrorText}
-                                        {...params}
-                                        name="communs"
-                                        label="Xã/Phường"
-                                        variant="outlined"
-                                        fullWidth
-                                        inputRef={register({ required: true })}
-                                        size="small"
-                                    />
-                                )}
-                                onChange={(e, value) => handleCommunsChange(e, value)}
-                                className={classes.formInput}
-                            />
+                        <div className={classes.feeform}>
+                            {(type || defaultValues.type.toString()) === '2'
+                                ? fields.map((field, index) => {
+                                      return (
+                                          <div className={classes.due} key={field.id}>
+                                              <div className={classes.fee}>
+                                                  <TextField
+                                                      size="small"
+                                                      autoFocus
+                                                      fullWidth
+                                                      type="text"
+                                                      label="Phương tiện"
+                                                      name={`fee[${index}].vehicle`}
+                                                      variant="outlined"
+                                                      defaultValue={field.vehicle}
+                                                      helperText={nameErrorText}
+                                                      error={isNameError}
+                                                      inputRef={register({ required: true })}
+                                                      className={classes.formInputfee}
+                                                  />
+                                                  <TextField
+                                                      size="small"
+                                                      autoFocus
+                                                      fullWidth
+                                                      type="text"
+                                                      label="Đơn vị tính"
+                                                      name={`fee[${index}].field`}
+                                                      defaultValue={field.unit}
+                                                      variant="outlined"
+                                                      helperText={nameErrorText}
+                                                      error={isNameError}
+                                                      inputRef={register({ required: true })}
+                                                      className={classes.formInputfee}
+                                                  />
+                                                  <TextField
+                                                      size="small"
+                                                      defaultValue={field.price}
+                                                      autoFocus
+                                                      fullWidth
+                                                      type="number"
+                                                    //   onChange={(event) =>handleChangeNumber(event)}
+                                                      label="Giá tiền"
+                                                      name={`fee[${index}].price`}
+                                                      variant="outlined"
+                                                      helperText={nameErrorText}
+                                                      error={isNameError}
+                                                      inputRef={register({ required: true })}
+                                                      className={classes.formInputfee}
+                                                  />
+                                                  <Tooltip title="xóa" arrow className={classes.tooltip}>
+                                                      <IconButton size="small">
+                                                          <DeleteRoundedIcon className={classes.icon} onClick={() => remove(index)} />
+                                                      </IconButton>
+                                                  </Tooltip>
+                                              </div>
+                                          </div>
+                                      )
+                                  })
+                                : null}
+                            {(type || defaultValues.type.toString()) === '2' ? (
+                                <div className={classes.buttonappen}>
+                                    <Button type="button" variant="contained" color="primary" onClick={() => append({})}>
+                                        Thêm
+                                    </Button>
+                                </div>
+                            ) : null}
                         </div>
-                        <div>
-                            <Autocomplete
-                                // multiple
-                                id="tags-outlined"
-                                options={districts}
-                                getOptionLabel={(option) => (option.name ? option.name : '')}
-                                noOptionsText={'Không có lựa chọn'}
-                                disableCloseOnSelect
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        name="typedue"
-                                        label="Loại bãi đỗ"
-                                        variant="outlined"
-                                        error={typedueError}
-                                        helperText={typedueErrorText}
-                                        fullWidth
-                                        inputRef={register({ required: true })}
-                                        size="small"
-                                    />
-                                )}
-                                className={classes.formInput}
-                            />
-                        </div>
-                    </div>
-                    <TextField
-                        size="small"
-                        autoFocus
-                        fullWidth
-                        type="text"
-                        inputProps={{ min: '0', max: '10', step: '1' }}
-                        label="Tổng số chỗ"
-                        name="total"
-                        variant="outlined"
-                        helperText={descriptionErrorText}
-                        error={isDescriptionError}
-                        inputRef={register({ required: true, pattern: /[-+]?[0-9]*[.,]?[0-9]+$/i })}
-                        className={classes.formInput}
-                        defaultValue={props.editFormData?.totalSlot || ''}
-                    />
-                    {/* {errors.total && errors.total.type==="pattern"? <p>{errors.total.message}</p>:null} */}
-                    {errors.total && errors.total.type === 'pattern' ? <p style={{ color: 'red' }}>Vui lòng nhập số</p> : null}
+                    </Scrollbars>
 
-                    <div className={classes.radio}>
-                        <RadioGroup
-                            aria-label="quiz"
-                            name="type"
-                            className={classes.radiogroup}
-                            value={type || defaultValues.type.toString()}
-                            onChange={handleChange}
-                        >
-                            <FormControlLabel value="1" control={<Radio color="primary" />} inputRef={register({ required: true })} label="Không thu phí" />
-                            <FormControlLabel
-                                value="2"
-                                control={<Radio color="primary" />}
-                                inputRef={register({ required: true })}
-                                label="Thu phí"
-                                onClick={fields.length === 0 ? () => append({}) : null}
-                            />
-                        </RadioGroup>
-                    </div>
-                    {(type || defaultValues.type.toString()) === '2'
-                        ? fields.map((field, index) => {
-                              return (
-                                  <div className={classes.due} key={field.id}>
-                                      <div className={classes.fee}>
-                                          <TextField
-                                              size="small"
-                                              autoFocus
-                                              fullWidth
-                                              type="text"
-                                              label="Phương tiện"
-                                              name={`fee[${index}].vehicle`}
-                                              variant="outlined"
-                                              defaultValue={field.vehicle}
-                                              helperText={nameErrorText}
-                                              error={isNameError}
-                                              inputRef={register({ required: true })}
-                                              className={classes.formInputfee}
-                                          />
-                                          <TextField
-                                              size="small"
-                                              autoFocus
-                                              fullWidth
-                                              type="text"
-                                              label="Đơn vị tính"
-                                              name={`fee[${index}].field`}
-                                              defaultValue={field.unit}
-                                              variant="outlined"
-                                              helperText={nameErrorText}
-                                              error={isNameError}
-                                              inputRef={register({ required: true })}
-                                              className={classes.formInputfee}
-                                          />
-                                          <TextField
-                                              size="small"
-                                              defaultValue={field.price}
-                                              autoFocus
-                                              fullWidth
-                                              type="text"
-                                              label="Giá tiền"
-                                              name={`fee[${index}].price`}
-                                              variant="outlined"
-                                              helperText={nameErrorText}
-                                              error={isNameError}
-                                              inputRef={register({ required: true })}
-                                              className={classes.formInputfee}
-                                          />
-                                          <Tooltip title="xóa" arrow className={classes.tooltip}>
-                                              <IconButton size="small">
-                                                  <DeleteOutlinedIcon className={classes.icon} onClick={() => remove(index)} />
-                                              </IconButton>
-                                          </Tooltip>
-                                      </div>
-                                  </div>
-                              )
-                          })
-                        : null}
                     {open ? (
                         <div className={classes.dialog}>
                             <Dialog open={open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
@@ -425,16 +476,9 @@ function FormAddPage(props) {
                             </Dialog>
                         </div>
                     ) : null}
-                    {(type || defaultValues.type.toString()) === '2' ? (
-                        <div className={classes.buttonappen}>
-                            <Button type="button" variant="contained" color="primary" onClick={() => append({})}>
-                                Thêm
-                            </Button>
-                        </div>
-                    ) : null}
 
                     <div className={classes.saveadd}>
-                        <Button type="submit" variant="contained" color="primary" className={classes.saveaddparking} onClick={cancleModal}>
+                        <Button type="submit" variant="contained" color="default" className={classes.saveaddparking} onClick={cancleModal}>
                             Hủy
                         </Button>
 
@@ -465,7 +509,9 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
         width: '100%',
         padding: '10px',
+        flex: '1 1 auto',
     },
+    feeform: {},
     paper: {
         color: theme.palette.text.secondary,
         height: '100%',
@@ -520,6 +566,9 @@ const useStyles = makeStyles((theme) => ({
         '&:last-child': {
             padding: 0,
         },
+    },
+    formdata: {
+        height: '100%',
     },
     size: {
         fontSize: 16,

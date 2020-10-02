@@ -11,6 +11,7 @@ import { GoogleMap } from 'react-google-maps'
 import GoogleMapControlled from 'components/google_map_controlled/google_map_controlled'
 import MarkerParking from 'components/admin_console/manage_parking/component/marker_parking'
 import NewMarker from 'components/admin_console/manage_parking/component/new_maker_parking/new_marker_parking'
+import Divider from '@material-ui/core/Divider';
 function ManageParking(props) {
     const classes = useStyles()
     const showModal = (e) => {
@@ -203,14 +204,15 @@ function ManageParking(props) {
                     </div>
                 ) : null}
             </div>
+            <Divider orientation="vertical" flexItem />
             <div className={classes.GoogleMap}>
                 <GoogleMapControlled>
                     <GoogleMap center={{ lat:parseFloat(16.07264), lng:parseFloat(108.229916) }} zoom={props.zoom} onClick={(e) => handleMap(e)}>
-                        {listCamera
-                            ? listCamera.map((marker, index) => {
+                        {props.parking.length>0
+                            ? props.parking.map((marker, index) => {
                                   if (marker.id === props.idEditForm && props.isEditingParking) return null
 
-                                  return <MarkerParking marker={marker} key={index} id={marker.id} lat={marker.lat} lng={marker.lng} />
+                                  return <MarkerParking marker={marker} key={index} id={marker._id} lat={marker.lat} lng={marker.lng}/>
                               })
                             : null}
                         {!isEmpty(props.isAdding) && props.isAddingParking ? <NewMarker lat={props.isAdding.lat} lng={props.isAdding.lng}></NewMarker> : null}

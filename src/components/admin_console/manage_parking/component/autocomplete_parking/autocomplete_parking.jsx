@@ -35,14 +35,14 @@ function AutocompleteCheckbox(props) {
     const handleCommunsChange = (e, value) => {
         SetvalueCommuns(value)
     }
-
+    const provinces=props.option.filter((province)=>province.code.toString() ==="48") 
     return (
         <React.Fragment>
             <FormGroup className={classes.formGroup}>
                 <Autocomplete
                     multiple
                     size="small"
-                    options={props.option || []}
+                    options={ provinces|| []}
                     getOptionLabel={props.option.length > 0 ? (option) => option.name : []}
                     noOptionsText={'Không có lựa chọn'}
                     // disableCloseOnSelect
@@ -166,7 +166,7 @@ export default AutocompleteCheckbox
 
 const useStyles = makeStyles((theme) => ({
     formGroup: {
-        marginBottom: 16,
+        marginBottom: 10,
     },
     labelRoot: {
         fontSize: 15,

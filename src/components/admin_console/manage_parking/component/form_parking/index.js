@@ -3,7 +3,7 @@ import { cancleFormParking } from 'actions/manage_parking/index'
 import FormAddPage from './form_parking'
 import {fetchProvinces,fetchDistrics,fetchCommunes} from 'actions/political/index'
 import {clearProvince,clearDistricts} from 'actions/political/action_political'
-import {addManageParking} from 'actions/manage_parking/manage_parking'
+import {addManageParking,editManageParking} from 'actions/manage_parking/manage_parking'
 
 
 const mapStateToProps = ({ manageparking,political }) => ({
@@ -14,7 +14,8 @@ const mapStateToProps = ({ manageparking,political }) => ({
     isAddingParking: manageparking.isAddingParking,
     option:political.provinces,
     districts:political.districts,
-    communes:political.communes
+    communes:political.communes,
+    idEditForm:manageparking.idEditForm
 })
 
 export default connect(mapStateToProps, {
@@ -24,5 +25,6 @@ export default connect(mapStateToProps, {
     fetchCommunes,
     clearProvince,
     clearDistricts,
-    addManageParking
+    addManageParking,
+    editManageParking
 })(FormAddPage)

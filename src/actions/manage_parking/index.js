@@ -68,13 +68,50 @@ export function addManageParkingRequest(data){
 }
 export function addManageParkingSuccess(data){
     return{
-        type:Types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST,
+        type:Types.MANAGE_PARKING.ADD_MANAGE_PARKING_SUCCESS,
         data
     }
 }
 export function addManageParkingFailed(err){
     return{
-        type:Types.MANAGE_PARKING.ADD_MANAGE_PARKING_REQUEST,
+        type:Types.MANAGE_PARKING.ADD_MANAGE_PARKING_FAILED,
+        err
+    }
+}
+export function deleteManageParkingRequest(){
+    return{
+        type:Types.MANAGE_PARKING.DELETE_MANAGE_PARKING_REQUEST,
+        
+    }
+}
+export function deleteManageParkingSuccess(id){
+    return{
+        type:Types.MANAGE_PARKING.DELETE_MANAGE_PARKING_SUCCESS,
+        id
+    }
+}
+export function deleteManageParkingFailed(err){
+    return{
+        type:Types.MANAGE_PARKING.DELETE_MANAGE_PARKING_FAILED,
+        err
+    }
+}
+export function editManageParkingRequest(){
+    return{
+        type:Types.MANAGE_PARKING.EDIT_MANAGE_PARKING_REQUEST
+        
+    }
+}
+export function editManageParkingSuccess(id,param){
+    return{
+        type:Types.MANAGE_PARKING.EDIT_MANAGE_PARKING_SUCCESS,
+        id,
+        param
+    }
+}
+export function editManageParkingFailed(err){
+    return{
+        type:Types.MANAGE_PARKING.EDIT_MANAGE_PARKING_FAILED,
         err
     }
 }
