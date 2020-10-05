@@ -6,7 +6,6 @@ import ItemParking from '../Itemcamera_parking'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 function Listitem(props) {
-    console.log(props.loading)
 
     const classes = useStyles()
     const [listCamera] = useState([
@@ -142,8 +141,6 @@ function Listitem(props) {
         },
     ])
 
-    console.log(props.parking, 'parking')
-
     return (
         <div className={classes.cameras}>
             <h4 className={classes.title}>
@@ -157,7 +154,7 @@ function Listitem(props) {
             <div className={classes.boxScrollCard}>
                 <Scrollbars>
                     <div className={classes.boxCameraItem}>
-                        {props.parking.length > 0
+                        {props.parking
                             ? props.parking.map((camera, index) => {
                                   return <ItemParking camera={camera} key={index} showdata={props.showdata} showpopup={props.showpopup} />
                               })

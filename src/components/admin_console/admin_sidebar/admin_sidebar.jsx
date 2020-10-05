@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { indigo, grey } from '@material-ui/core/colors'
@@ -9,7 +9,7 @@ import { Scrollbars } from 'react-custom-scrollbars'
 import { ScrollbarStyle } from 'utils/styles'
 import NavLink from 'components/custom_router_link'
 
-function AdminSidebar() {
+function AdminSidebar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
 
@@ -24,6 +24,11 @@ function AdminSidebar() {
     }
 
     const classes = useStyles()
+
+    useEffect(() => {
+        props.cancleFormParking(true)
+    }, [window.location.pathname])
+
     return (
         <div className={classes.root}>
             <div className={classes.top}>

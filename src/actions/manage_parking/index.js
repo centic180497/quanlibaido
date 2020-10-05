@@ -1,13 +1,15 @@
 import * as Types from 'action_types/manage_parking'
+import { ActionTypes } from 'utils/constants';
 
 export function showFormParking() {
     return {
         type: Types.SHOW_FORM_ADD_PARKING,
     }
 }
-export function cancleFormParking() {
+export function cancleFormParking(payload) {
     return {
         type: Types.CANCLE_FORM_ADD_PARKING,
+        payload
     }
 }
 export function editFormData(payload) {
@@ -94,6 +96,24 @@ export function deleteManageParkingFailed(err){
     return{
         type:Types.MANAGE_PARKING.DELETE_MANAGE_PARKING_FAILED,
         err
+    }
+}
+export function GeteditManageParkingRequest(){
+    return{
+        type:Types.MANAGE_PARKING.GET_EDIT_MANAGE_PARKING_REQUEST
+        
+    }
+}
+export function GeteditManageParkingSuccess(data){
+    return{
+        type:Types.MANAGE_PARKING.GET_EDIT_MANAGE_PARKING_SUCCESS,
+        data
+    }
+}
+export function GeteditManageParkingFailed(err){
+    return{
+        type:Types.MANAGE_PARKING.GET_EDIT_MANAGE_PARKING_FAILED,
+        err:ActionTypes.err
     }
 }
 export function editManageParkingRequest(){

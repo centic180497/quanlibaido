@@ -7,14 +7,17 @@ function ItemParking(props) {
     const classes = useStyles()
     const { camera, editFormData, infowindow } = props
     const [open, setOpen] = React.useState(false)
-    console.log(camera)
 
     const showformdata = (camera) => {
-        editFormData(camera)
+        console.log(camera)
+
+        props.getEditManageParking(camera.id)
+        props.fetchDistrics(camera.province)
+        props.fetchCommunes(camera.district)
+        // editFormData(camera)
     }
     const itemActive = (e, id) => {
         console.log(id)
-
         e.stopPropagation()
         props.showInfowindow(id)
     }
@@ -27,8 +30,6 @@ function ItemParking(props) {
     }
     const deleteParking = (e, id) => {
         e.stopPropagation()
-        console.log(id, 'id')
-
         props.deleteManageParking(id)
         setOpen(false)
     }
@@ -38,11 +39,11 @@ function ItemParking(props) {
             <Card className={infowindow === camera._id ? classes.cardActive : classes.card} onClick={(e) => itemActive(e, camera._id)}>
                 <div className={classes.image}></div>
                 <CardContent className={classes.contentCard}>
-                    <Typography gutterBottom className={classes.nameCamera} >
+                    <Typography gutterBottom className={classes.nameCamera} noWrap>
                         {camera.name}
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p" className={classes.address}>
-                        {camera.district}
+                        {camera.address}
                     </Typography>
                     <CardActions className={classes.cardActions}>
                         <Tooltip title="Xóa" arrow className={classes.tooltip}>
@@ -69,7 +70,7 @@ function ItemParking(props) {
                             <Button color="primary" onClick={(e) => handleClose(e)}>
                                 Disagree
                             </Button>
-                            <Button color="primary" autoFocus onClick={(e) => deleteParking(e, camera._id)}>
+                            <Button color="primary" autoFocus onClick={(e) => deleteParking(e, camera.id)}>
                                 Agree
                             </Button>
                         </DialogActions>
@@ -111,7 +112,8 @@ const useStyles = makeStyles((theme) => ({
     },
     contentCard: {
         padding: '6px 0px 0 20px !important',
-        flex:1
+        flex: 1,
+        overflow: 'hidden',
     },
     nameCamera: {
         fontSize: 16,

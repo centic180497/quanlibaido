@@ -1,5 +1,5 @@
 import { Client } from 'client'
-import * as actions from './index'
+import * as actions from './index.js'
 
 export const fetchManageParking =()=>{
     return async (dispatch)=>{
@@ -7,6 +7,8 @@ export const fetchManageParking =()=>{
         let data
         try{
             data=await Client.getManageParking()
+            console.log("dâtta",data);
+            
         }catch(err){
             dispatch(actions.getParkingFailed(err))
             return err
@@ -42,28 +44,49 @@ export const deleteManageParking=(id)=>{
             
         }
         catch(err){
-            dispatch(actions.deleteManageParkingFailed(err))
+            dispatch(actions.GeteditManageParkingFailed(err))
             return err
         }   
         dispatch(actions.deleteManageParkingSuccess(id))
     }
 }
 export const editManageParking=(param, id)=>{
+    console.log("param",param);
+    console.log("id",id);
+    
+    
     return async (dispatch)=>{
-        dispatch(actions.deleteManageParkingRequest())
+        dispatch(actions.editManageParkingRequest())
         let data 
         try{
             data =await Client.editManageParking(param, id)
-            console.log(data);
+            console.log(data,"editdatat");
             
         }
         catch(err){
             dispatch(actions.editManageParkingFailed(err))
+            console.log(err);
             return err
+            
         }   
 
         console.log(param)
-        param['_id'] = data._id
-        dispatch(actions.editManageParkingSuccess(data._id, param))
+        param['id'] = id
+        dispatch(actions.editManageParkingSuccess(id, param))
+    }
+}
+export const getEditManageParking =(id)=>{
+    return async (dispatch)=>{
+        dispatch(actions.GeteditManageParkingRequest())
+        let data
+        try{
+            data=await Client.GeteditManageParking(id)
+            console.log("dâtta",data);
+            
+        }catch(err){
+            dispatch(actions.GeteditManageParkingFailed(err))
+            return err
+        }
+        dispatch(actions.GeteditManageParkingSuccess(data))
     }
 }

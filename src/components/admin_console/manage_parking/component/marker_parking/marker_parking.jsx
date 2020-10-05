@@ -7,7 +7,7 @@ function MarkerParking(props) {
     // const classes = useStyles()
     const { marker, lat, lng, id, showInfowindow } = props
     const markerClick = (id) => {
-        showInfowindow(id)
+        props.showInfowindow(id)
     }
     const handleToggle = () => {
         props.cancleInforwindow()
@@ -34,7 +34,7 @@ function MarkerParking(props) {
                 position={{ lat:parseFloat(lat), lng:parseFloat(lng)}}
                 key={id}
                 onClick={(e) => {
-                    markerClick(marker.id)
+                    markerClick(marker._id)
                 }}
                 icon={iconmarker}
             >

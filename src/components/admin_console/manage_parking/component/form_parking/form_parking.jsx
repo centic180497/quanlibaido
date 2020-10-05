@@ -44,16 +44,25 @@ function FormAddPage(props) {
     const typecommunsErrorText = provinceError ? 'Phường không được để trống' : ''
     console.log(props.editFormData)
     const onSubmit = handleSubmit((updatedData, e) => {
-        e.isPropagationStopped()
+        // e.isPropagationStopped()
         const param = { ...updatedData }
-        console.log("param",param);
-        
+
+        param['totalSlots'] = parseInt(updatedData.totalSlots)
+        param['type'] = parseInt(updatedData.type)
+        console.log('param', param)
         param['lat'] = getValues('lat')
         param['lng'] = getValues('lng')
+
+        param['lat'] = parseFloat(getValues('lat'))
+        param['lng'] = parseFloat(getValues('lng'))
+        param['province'] = valueprovince.code
+        param['district'] = valueDistrict.code
+        param['commune'] = valueCommuns.code
+
         if (props.editFormData) {
             const id = props.idEditForm
 
-            props.editManageParking(param, id)
+            props.editManageParking(param, props.editFormData.id)
             props.clearProvince()
             props.clearDistricts()
             props.cancleFormParking()
@@ -71,9 +80,9 @@ function FormAddPage(props) {
         { id: 2, name: 'Mất Phí' },
     ])
     const [valueprovince, Setvalueprovince] = useState('')
-    const [valueDistrict, SetvalueDistrict] = useState([])
-    const [valueCommuns, SetvalueCommuns] = useState([])
-    const [number,Setnumber]=useState("")
+    const [valueDistrict, SetvalueDistrict] = useState('')
+    const [valueCommuns, SetvalueCommuns] = useState('')
+    const [number, Setnumber] = useState('')
     const [open, setOpen] = React.useState(false)
     const { option } = props
     const handleClose = (e) => {
@@ -85,11 +94,12 @@ function FormAddPage(props) {
         }
     }, [fields])
 
+    console.log(number, 'number')
+
     const type = watch('type')
     const typedue = watch('typedue')
     const lat = watch('lat')
     const lng = watch('lng')
-
     useEffect(() => {
         // setValue('lat',lat)
         // setValue('lng',lng)
@@ -100,16 +110,13 @@ function FormAddPage(props) {
         e.isPropagationStopped()
         const { lat, lng, name, totalSlot, type, communs, typedue } = control.defaultValuesRef.current
 
-
         if (props.editFormData) {
             if (
-                getValues('lat') !== lat.toString() ||
-                getValues('lng') !== lng.toString()
+                getValues('lat') !== lat ||
+                getValues('lng') !== lng
                 // getValues('totalSlots').toString()!== totalSlot
                 // getValues('name') !== name
             ) {
-                console.log('vô edit')
-
                 setOpen(true)
             } else {
                 props.cancleFormParking()
@@ -125,8 +132,6 @@ function FormAddPage(props) {
                 getValues('typedue') !== '' ||
                 getValues('totalSlots') !== ''
             ) {
-                console.log('vô add')
-
                 setOpen(true)
             } else {
                 props.clearProvince()
@@ -144,6 +149,8 @@ function FormAddPage(props) {
         setValue('type', event.target.value)
     }
     const handleProvinceChange = (e, value) => {
+        console.log(value, 'valueprovince')
+
         Setvalueprovince(value)
         if (value === null) {
             props.clearProvince()
@@ -157,7 +164,6 @@ function FormAddPage(props) {
     }
     const handleDistrictChange = (e, value) => {
         SetvalueDistrict(value)
-
         if (value === null) {
             props.clearDistricts()
 
@@ -171,11 +177,20 @@ function FormAddPage(props) {
     const handleCommunsChange = (e, value) => {
         SetvalueCommuns(value)
     }
-    const handleChangeNumber=(event) => {
-        Setnumber(Number(event.target.value))
-      }
+    const handleChangeNumber = (event) => {
+        // Setnumber(Number(event.target.value))
 
-    const provinces = props.option.filter((province) => province.code.toString() === '48')
+        var regex = /^[0-9]+$/
+        if (event.target.value.match(regex) || event.target.value.length === 0) {
+            Setnumber(event.target.value)
+        }
+    }
+    
+        // const editProvince = props.option.filter((item) => item.code === props.editFormData.province)
+        // console.log(editProvince)
+        // const editdistric = props.districts.filter((item) => item.code === props.editFormData.district)
+        // console.log('editdistric', editdistric)
+    
 
     return (
         <div className={classes.wrapGrid}>
@@ -243,10 +258,11 @@ function FormAddPage(props) {
                                     // multiple
                                     id="tags-outlined"
                                     disableCloseOnSelect={false}
-                                    options={provinces || []}
+                                    options={props.provinces || []}
                                     getOptionLabel={(option) => (option.name ? option.name : '')}
+                                    // defaultValue={editProvince[0]}
                                     noOptionsText={'Không có lựa chọn'}
-                                    value={option.length > 0 || valueprovince ? option.name : ''}
+                                    value={option.name}
                                     renderInput={(params) => (
                                         <TextField
                                             disableCloseOnSelect={false}
@@ -273,7 +289,9 @@ function FormAddPage(props) {
                                     options={props.districts.length > 0 ? props.districts : []}
                                     getOptionLabel={(option) => (option.name ? option.name : '')}
                                     noOptionsText={'Không có lựa chọn'}
+                                    // defaultValue={props.editFormData ? editdistric[0] : 'abx'}
                                     value={props.districts.length > 0 || valueprovince ? valueDistrict : ''}
+                                    // value={props.editFormData? editdistric:"" }
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
@@ -308,7 +326,7 @@ function FormAddPage(props) {
                                             error={communsError}
                                             helperText={typecommunsErrorText}
                                             {...params}
-                                            name="communs"
+                                            name="commune"
                                             label="Xã/Phường"
                                             variant="outlined"
                                             fullWidth
@@ -349,8 +367,7 @@ function FormAddPage(props) {
                                 size="small"
                                 autoFocus
                                 fullWidth
-                                type="tel"
-                                onChange={(event) =>handleChangeNumber(event)}
+                                onChange={(event) => handleChangeNumber(event)}
                                 label="Tổng số chỗ"
                                 name="totalSlots"
                                 variant="outlined"
@@ -359,8 +376,7 @@ function FormAddPage(props) {
                                 inputRef={register({ required: true, pattern: /[-+]?[0-9]*[.,]?[0-9]+$/i })}
                                 className={classes.formInput}
                                 defaultValue={props.editFormData?.totalSlot || ''}
-                                // value={number}
-                                
+                                value={number}
                             />
                             {/* {errors.total && errors.total.type==="pattern"? <p>{errors.total.message}</p>:null} */}
                             {errors.total && errors.total.type === 'pattern' ? <p style={{ color: 'red' }}>Vui lòng nhập số</p> : null}
@@ -429,7 +445,7 @@ function FormAddPage(props) {
                                                       autoFocus
                                                       fullWidth
                                                       type="number"
-                                                    //   onChange={(event) =>handleChangeNumber(event)}
+                                                      //   onChange={(event) =>handleChangeNumber(event)}
                                                       label="Giá tiền"
                                                       name={`fee[${index}].price`}
                                                       variant="outlined"

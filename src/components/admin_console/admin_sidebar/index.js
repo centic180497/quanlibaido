@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
-
 import AdminSidebar from './admin_sidebar'
-
-export default connect()(AdminSidebar)
+import { cancleFormParking } from 'actions/manage_parking/index'
+export default connect(null,{
+    cancleFormParking,
+})(AdminSidebar)

@@ -11,7 +11,7 @@ export default class Client {
     defaultHeaders: { [x: string]: string } = {}
     userId = ''
     userRole?: string
-    urlparking='https://blog-api-linh.herokuapp.com'
+    urlparking='http://10.49.46.251:9002'
 
     getUrl() {
         return this.url
@@ -98,26 +98,35 @@ export default class Client {
         const {data}: any= await this.doFetchWithResponse(`${this.getParkingRoute()}`,{method:'get',data:{}})
         return data
     }
-    addManageParking= async(value:object)=>{
+    addManageParking= async (value:any)=>{
         console.log(value);
-        const {data}: any= await this.doFetchWithResponse(`${this.getParkingRoute()}`,{method:'post', data: value })
+        const {data}: any= await this.doFetchWithResponse(`${this.getParkingRoute()}`,{method:'post', data: {...value} })
+
+        console.log(data,"datatatatatatatatataat");
+        
         return data
     }
     deleteManageParking=async(id:number)=>{
         const {data}:any= await this.doFetchWithResponse(`${this.getParkingRoute()}/${id}`,{method:'delete', data:{} })
         return data
     }
-    editManageParking=async(param:object,id:number,)=>{
+    editManageParking=async(param:object,id:number)=>{
         console.log(id);
-        // console.log(id);
+        console.log(param);
         
-        
-        const {data}:any= await this.doFetchWithResponse(`${this.getParkingRoute()}/${id}`,{method:'PATCH', data:param })
+        // console.log(id);    
+        const {data}:any= await this.doFetchWithResponse(`${this.getParkingRoute()}/${id}`,{method:'PUT', data:{...param} })
+        console.log(data);
+        return data
+    }
+    GeteditManageParking=async(id:number)=>{
+        const {data}:any= await this.doFetchWithResponse(`${this.getParkingRoute()}/${id}`,{method:'GET', data:{} })
         return data
     }
 
     getDistricts = async (id:number) => {
         const { data } : any= await this.doFetchWithResponse(`${this.getPolitical()}/districts?province=${id}`, { method: 'get', data:id })
+        
         return data
     }
 
@@ -132,11 +141,17 @@ export default class Client {
 
     doFetchWithResponse = async (url: string, options: Options) => {
         console.log(url, options)
+        console.log(url,"url");
+        
         try {
             const response = await axios({ url: url, ...this.getOptions(options) })
             const { data, headers } = response
+            console.log(response,"response");
             return { data, headers }
+            
         } catch (error) {
+            console.log(error,"ksnvsjisisd");
+            
             throw error.response?.data?.data
         }
     }

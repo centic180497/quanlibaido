@@ -162,7 +162,7 @@ function ManageParking(props) {
             props.editingParking(lat, lng)
         }
     }
-
+console.log(props.parking);
     return (
         <div className={classes.wrapGrid}>
             <div className={classes.listCamera}>
@@ -208,7 +208,7 @@ function ManageParking(props) {
             <div className={classes.GoogleMap}>
                 <GoogleMapControlled>
                     <GoogleMap center={{ lat:parseFloat(16.07264), lng:parseFloat(108.229916) }} zoom={props.zoom} onClick={(e) => handleMap(e)}>
-                        {props.parking.length>0
+                        {props.parking
                             ? props.parking.map((marker, index) => {
                                   if (marker.id === props.idEditForm && props.isEditingParking) return null
 
