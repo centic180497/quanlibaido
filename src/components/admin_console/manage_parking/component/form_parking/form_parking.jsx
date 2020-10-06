@@ -45,6 +45,8 @@ function FormAddPage(props) {
     console.log(props.editFormData)
     const onSubmit = handleSubmit((updatedData, e) => {
         // e.isPropagationStopped()
+        console.log(updatedData);
+        
         const param = { ...updatedData }
 
         param['totalSlots'] = parseInt(updatedData.totalSlots)
@@ -53,11 +55,20 @@ function FormAddPage(props) {
         param['lat'] = getValues('lat')
         param['lng'] = getValues('lng')
 
-        param['lat'] = parseFloat(getValues('lat'))
-        param['lng'] = parseFloat(getValues('lng'))
+        param['lat'] = Number( getValues('lat'))
+        param['lng'] = Number( getValues('lng'))
         param['province'] = valueprovince.code
         param['district'] = valueDistrict.code
         param['commune'] = valueCommuns.code
+
+        let object = {
+            ...props.editFormData,
+
+            ...param,
+            
+        }
+
+        // param.address = 
 
         if (props.editFormData) {
             const id = props.idEditForm
@@ -82,6 +93,9 @@ function FormAddPage(props) {
     const [valueprovince, Setvalueprovince] = useState('')
     const [valueDistrict, SetvalueDistrict] = useState('')
     const [valueCommuns, SetvalueCommuns] = useState('')
+    const [editValue, SeteditValue] = useState([])
+    const [editProvince, SeteditProvince] = useState([])
+    const [editCommune, SeteditCommune] = useState([])
     const [number, Setnumber] = useState('')
     const [open, setOpen] = React.useState(false)
     const { option } = props
@@ -101,8 +115,27 @@ function FormAddPage(props) {
     const lat = watch('lat')
     const lng = watch('lng')
     useEffect(() => {
-        // setValue('lat',lat)
-        // setValue('lng',lng)
+        if (props.editFormData) {
+            const editdistric = props.districts.filter((item) => item.code === props.editFormData.district)
+            SeteditValue(editdistric)
+
+            const editcommuns = props.communes.filter((item) => item.code === props.editFormData.commune)
+            SeteditCommune(editcommuns)
+
+            const editProvince = props.option.filter((item) => item.code === props.editFormData.province)
+            SeteditProvince(editProvince)
+        }
+        // if(props.editFormData) {
+        //     let political = props.editFormData.address.split(",")
+        //     SeteditCommune({name: political[0], code: props.editFormData.commune})
+        //     SeteditValue({name: political[1], code: props.editFormData.district})
+        //     SeteditProvince({name: political[2], code: props.editFormData.province})
+
+        //     console.log('politicalpoliticalpolitical', political)
+        // }
+    }, [props.districts,props.option,props.communes])
+
+    useEffect(() => {
         setValue('type', type)
         setValue('typedue', typedue)
     }, [type, typedue, lat, lng])
@@ -150,32 +183,40 @@ function FormAddPage(props) {
     }
     const handleProvinceChange = (e, value) => {
         console.log(value, 'valueprovince')
-
         Setvalueprovince(value)
         if (value === null) {
             props.clearProvince()
             SetvalueDistrict('')
             SetvalueCommuns('')
         } else {
+            SeteditProvince([value])
+            // Setvalueprovince(value)
+            // SeteditProvince(value)
             const id = value.code
-
             props.fetchDistrics(id)
         }
     }
     const handleDistrictChange = (e, value) => {
+        console.log('onchange value distric', value)
+
         SetvalueDistrict(value)
+        SeteditValue([value])
         if (value === null) {
             props.clearDistricts()
 
-            SetvalueCommuns('')
+            // SetvalueCommuns('')
         } else {
             const id = value.code
-
             props.fetchCommunes(id)
         }
     }
     const handleCommunsChange = (e, value) => {
         SetvalueCommuns(value)
+        // SeteditCommune(value)
+        if (props.editFormData) {
+            SetvalueCommuns(value)
+            SeteditCommune(value)
+        }
     }
     const handleChangeNumber = (event) => {
         // Setnumber(Number(event.target.value))
@@ -185,12 +226,11 @@ function FormAddPage(props) {
             Setnumber(event.target.value)
         }
     }
-    
-        // const editProvince = props.option.filter((item) => item.code === props.editFormData.province)
-        // console.log(editProvince)
-        // const editdistric = props.districts.filter((item) => item.code === props.editFormData.district)
-        // console.log('editdistric', editdistric)
-    
+
+    console.log(props.districts, 'props.districts', props.communes, 'props.communes')
+
+    const provinces = props.option.filter((item) => item.code === '48')
+    console.log(editValue)
 
     return (
         <div className={classes.wrapGrid}>
@@ -232,7 +272,7 @@ function FormAddPage(props) {
                                     defaultValue={props.editFormData?.lat || 'Kinh độ'}
                                     variant="outlined"
                                     value={props.editFormData ? props.editFormData.lat : props.isAdding.lat}
-                                    inputRef={register({ required: true })}
+                                    inputRef={register()}
                                     className={classes.formInput}
                                 />
                                 <p className={classes.lat}></p>
@@ -258,11 +298,11 @@ function FormAddPage(props) {
                                     // multiple
                                     id="tags-outlined"
                                     disableCloseOnSelect={false}
-                                    options={props.provinces || []}
+                                    options={provinces || []}
                                     getOptionLabel={(option) => (option.name ? option.name : '')}
-                                    // defaultValue={editProvince[0]}
+                                    // defaultValue={editProvince?editProvince[0]:null}
                                     noOptionsText={'Không có lựa chọn'}
-                                    value={option.name}
+                                    value={editProvince[0]}
                                     renderInput={(params) => (
                                         <TextField
                                             disableCloseOnSelect={false}
@@ -286,12 +326,13 @@ function FormAddPage(props) {
                                     // multiple
                                     disableCloseOnSelect={false}
                                     id="tags-outlined"
-                                    options={props.districts.length > 0 ? props.districts : []}
+                                    options={props.districts}
                                     getOptionLabel={(option) => (option.name ? option.name : '')}
                                     noOptionsText={'Không có lựa chọn'}
-                                    // defaultValue={props.editFormData ? editdistric[0] : 'abx'}
-                                    value={props.districts.length > 0 || valueprovince ? valueDistrict : ''}
-                                    // value={props.editFormData? editdistric:"" }
+                                    // defaultValue={editValue}
+                                    // value={props.districts.length > 0 || valueprovince ? valueDistrict : ''}
+                                    value={editValue[0]}
+                                    // devalue={props.editFormData? editdistric[0]:""}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
@@ -319,7 +360,8 @@ function FormAddPage(props) {
                                     options={props.communes.length > 0 ? props.communes : []}
                                     getOptionLabel={(option) => (option.name ? option.name : '')}
                                     noOptionsText={'Không có lựa chọn'}
-                                    value={props.communes.length > 0 || valueprovince ? valueCommuns : ''}
+                                    value={props.editFormData?editCommune:valueCommuns}
+                                    // value={props.communes.length > 0 || valueprovince ? valueCommuns : ''}
                                     renderInput={(params) => (
                                         <TextField
                                             disableCloseOnSelect={false}

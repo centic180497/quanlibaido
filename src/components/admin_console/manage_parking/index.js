@@ -4,7 +4,7 @@ import {fetchProvinces} from 'actions/political/index'
 import {fetchManageParking} from 'actions/manage_parking/manage_parking'
 import ManageParking from './manage_parking'
 
-const mapStateToProps = ({ manageparking }) => ({
+const mapStateToProps = ({ manageparking,political }) => ({
     showformadd: manageparking.showformadd,
     isAddingParking: manageparking.isAddingParking,
     isEditingParking: manageparking.isEditingParking,
@@ -13,7 +13,8 @@ const mapStateToProps = ({ manageparking }) => ({
     editFormData: manageparking.editFormData,
     idEditForm: manageparking.idEditForm,
     zoom: manageparking.zoom,
-    parking:manageparking.manageParking
+    parking:manageparking.manageParking,
+    loadingPolitical:political.loadingPolitical
 })
 
 export default connect(mapStateToProps, {

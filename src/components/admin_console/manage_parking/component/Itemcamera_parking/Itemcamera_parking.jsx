@@ -3,18 +3,43 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Typography, Card, CardActions, CardContent, IconButton, Tooltip } from '@material-ui/core'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
+import Backdrop from '@material-ui/core/Backdrop'
+import CircularProgress from '@material-ui/core/CircularProgress'
 function ItemParking(props) {
     const classes = useStyles()
     const { camera, editFormData, infowindow } = props
     const [open, setOpen] = React.useState(false)
+    const showformdata = async(e, camera) => {
+        e.stopPropagation()
+        if(props.loadingPolitical){
+            return(
+                <Backdrop >
+                <CircularProgress color="inherit" />
+              </Backdrop>
+            )
+        }
+       
+        try{
+            await props.getEditManageParking(camera.id)
+            await  props.fetchDistrics(camera.province)
+            await props.fetchCommunes(camera.district)
+        }   
+        catch(err){
+            console.log(err);
+            
+        }
+        // console.log(props.loadingPolitical)
+        //     props.getEditManageParking(camera.id)
+        //     props.fetchDistrics(camera.province)
+        //     props.fetchCommunes(camera.district)
+        //     if(props.loadingPolitical||props.loading){
+        //         return(
+        //             <Backdrop >
+        //             <CircularProgress color="inherit" />
+        //           </Backdrop>
+        //         )
+        //     }
 
-    const showformdata = (camera) => {
-        console.log(camera)
-
-        props.getEditManageParking(camera.id)
-        props.fetchDistrics(camera.province)
-        props.fetchCommunes(camera.district)
-        // editFormData(camera)
     }
     const itemActive = (e, id) => {
         console.log(id)
@@ -52,7 +77,7 @@ function ItemParking(props) {
                             </IconButton>
                         </Tooltip>
                         <Tooltip title="Sửa" arrow className={classes.tooltip}>
-                            <IconButton size="small" onClick={() => showformdata(camera)}>
+                            <IconButton size="small" onClick={(e) => showformdata(e, camera)}>
                                 <EditIcon className={classes.icon} />
                             </IconButton>
                         </Tooltip>
